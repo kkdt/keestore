@@ -1,0 +1,39 @@
+/**
+ * Copyright (C) 2017 thinh ho
+ * This file is part of 'keestore' which is released under the MIT license.
+ * See LICENSE at the project root directory.
+ */
+buildscript {
+   repositories {
+       mavenCentral()
+   }
+   dependencies {
+       classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.8.RELEASE")
+   }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+//apply plugin: 'spring-boot'
+
+description = 'Key-value storage with crypto'
+version = '0.1'
+
+eclipse {
+   classpath {
+      downloadSources=true
+   }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+   compile 'log4j:log4j:1.2.17'
+//   compile 'org.springframework.boot:spring-boot:1.2.5.RELEASE'
+//   compile 'com.nimbusds:nimbus-jose-jwt:4.23'
+   
+   testCompile 'junit:junit:4.12'
+}
+
