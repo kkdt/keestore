@@ -3,7 +3,7 @@
  * This file is part of 'keestore' which is released under the MIT license.
  * See LICENSE at the project root directory.
  */
-package keestore.crypto.unit;
+package keestore.crypto;
 
 import static org.junit.Assert.assertTrue;
 
