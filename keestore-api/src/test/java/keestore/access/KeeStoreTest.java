@@ -17,11 +17,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import keestore.access.KeeItem;
-import keestore.access.KeeVault;
+import keestore.access.KeeStore;
 
-public class KeeVaultTest {
+public class KeeStoreTest {
    private static final List<String> keys = Arrays.asList("lastName", "firstName", "ssn");
-   private KeeVault vault;
+   private KeeStore vault;
    private KeeItem item1;
    private KeeItem item2;
    
@@ -37,7 +37,7 @@ public class KeeVaultTest {
       item2.put("firstName", "Peter");
       item2.put("ssn", "444-55-6666");
       
-      vault = new KeeVault();
+      vault = new KeeStore();
       vault.addItem(item1);
       vault.addItem(item2);
    }
@@ -55,37 +55,37 @@ public class KeeVaultTest {
    @Test
    public void testToJson() {
       try {
-         KeeVault.toKeeVault(null);
+         KeeStore.toKeeVault(null);
          assertTrue("Expecting IllegalArgumentException: Should not be able to KeeVault.toKeeItem(null) ", false);
       } catch (IllegalArgumentException e) {}
       
       Map<String, Object> map = new HashMap<>();
       try {
-         KeeVault.toKeeVault(JSONValue.toJSONString(map));
+         KeeStore.toKeeVault(JSONValue.toJSONString(map));
          assertTrue("Expecting IllegalArgumentException: Should not be able to KeeVault.toKeeItem(empty-map) ", false);
       } catch (IllegalArgumentException e) {}
       
       map.putAll(vault.toMap());
-      String oldId = (String)map.remove(KeeVault.VAULTID_KEY);
+      String oldId = (String)map.remove(KeeStore.STOREID_KEY);
       try {
-         KeeVault.toKeeVault(JSONValue.toJSONString(map));
+         KeeStore.toKeeVault(JSONValue.toJSONString(map));
          assertTrue("Expecting IllegalArgumentException: Missing required KeeVault.VAULTID_KEY", false);
       } catch (IllegalArgumentException e) {
-         map.put(KeeVault.VAULTID_KEY, oldId);
+         map.put(KeeStore.STOREID_KEY, oldId);
       }
       
-      String oldName = (String)map.remove(KeeVault.VAULTNAME_KEY);
+      String oldName = (String)map.remove(KeeStore.STORENAME_KEY);
       try {
-         KeeVault.toKeeVault(JSONValue.toJSONString(map));
+         KeeStore.toKeeVault(JSONValue.toJSONString(map));
          assertTrue("Expecting IllegalArgumentException: Missing required KeeVault.VAULTNAME_KEY", false);
       } catch (IllegalArgumentException e) {
-         map.put(KeeVault.VAULTNAME_KEY, oldName);
+         map.put(KeeStore.STORENAME_KEY, oldName);
       }
       
       String invalidEntry = "hello";
       map.put(invalidEntry, new Integer(1));
       try {
-         KeeVault.toKeeVault(JSONValue.toJSONString(map));
+         KeeStore.toKeeVault(JSONValue.toJSONString(map));
          assertTrue("Expecting IllegalArgumentException: Values expecting to be String or Map", false);
       } catch (IllegalArgumentException e) {
          map.remove(invalidEntry);
@@ -93,7 +93,7 @@ public class KeeVaultTest {
       
       String json = vault.toJSONString();
       assertTrue(json != null && json.length() > 0);
-      KeeVault convertedVault = KeeVault.toKeeVault(json);
+      KeeStore convertedVault = KeeStore.toKeeVault(json);
       assertTrue(convertedVault != null && convertedVault.toMap().equals(vault.toMap()));
    }
    

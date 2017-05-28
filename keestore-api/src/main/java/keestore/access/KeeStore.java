@@ -27,9 +27,9 @@ import org.json.simple.JSONValue;
  * @author thinh ho
  *
  */
-public class KeeVault implements Kee, JSONAware, JSONStreamAware {
-   public static final String VAULTID_KEY = "vaultId";
-   public static final String VAULTNAME_KEY = "vaultName";
+public class KeeStore implements Kee, JSONAware, JSONStreamAware {
+   public static final String STOREID_KEY = "storeId";
+   public static final String STORENAME_KEY = "storeName";
    
    /**
     * <p>
@@ -41,19 +41,19 @@ public class KeeVault implements Kee, JSONAware, JSONStreamAware {
     * @return
     */
    @SuppressWarnings({ "rawtypes" })
-   public static KeeVault toKeeVault(String json) {
+   public static KeeStore toKeeVault(String json) {
       if(json == null) {
          throw new IllegalArgumentException("Invalid object for conversion: " + json);
       }
       Object converted = JSONValue.parse(json);
       Map map = (Map)converted;
-      return new KeeVault(map);
+      return new KeeStore(map);
    }
    
    private static Set<String> expectedKeys() {
       Set<String> keys = new HashSet<>();
-      keys.add(VAULTID_KEY);
-      keys.add(VAULTNAME_KEY);
+      keys.add(STOREID_KEY);
+      keys.add(STORENAME_KEY);
       return keys;
    }
    
@@ -68,14 +68,14 @@ public class KeeVault implements Kee, JSONAware, JSONStreamAware {
     * @param map
     */
    @SuppressWarnings({ "rawtypes", "unchecked" })
-   protected KeeVault(Map map) {
+   protected KeeStore(Map map) {
       this("");
-      if(!map.containsKey(VAULTID_KEY)) {
-         throw new IllegalArgumentException("Vault identifier not found, key: " + VAULTID_KEY);
+      if(!map.containsKey(STOREID_KEY)) {
+         throw new IllegalArgumentException("Vault identifier not found, key: " + STOREID_KEY);
       }
       
-      if(!map.containsKey(VAULTNAME_KEY)) {
-         throw new IllegalArgumentException("Vault name not found, key: " + VAULTNAME_KEY);
+      if(!map.containsKey(STORENAME_KEY)) {
+         throw new IllegalArgumentException("Vault name not found, key: " + STORENAME_KEY);
       }
       
       expectedKeys().forEach(k -> {
@@ -106,7 +106,7 @@ public class KeeVault implements Kee, JSONAware, JSONStreamAware {
     * Empty name vault.
     * </p>
     */
-   public KeeVault() {
+   public KeeStore() {
       this("");
    }
    
@@ -117,9 +117,9 @@ public class KeeVault implements Kee, JSONAware, JSONStreamAware {
     * 
     * @param name
     */
-   public KeeVault(String name) {
+   public KeeStore(String name) {
       storage = Collections.synchronizedMap(new HashMap<>());
-      storage.put(VAULTID_KEY, UUID.randomUUID().toString());
+      storage.put(STOREID_KEY, UUID.randomUUID().toString());
       setName(name);
    }
    
@@ -132,7 +132,7 @@ public class KeeVault implements Kee, JSONAware, JSONStreamAware {
     */
    @Override
    public String getId() {
-      return (String)storage.get(VAULTID_KEY);
+      return (String)storage.get(STOREID_KEY);
    }
 
    /**
@@ -143,7 +143,7 @@ public class KeeVault implements Kee, JSONAware, JSONStreamAware {
     * @return
     */
    public String getName() {
-      return (String)storage.get(VAULTNAME_KEY);
+      return (String)storage.get(STORENAME_KEY);
    }
    
    /**
@@ -154,7 +154,7 @@ public class KeeVault implements Kee, JSONAware, JSONStreamAware {
     * @param name
     */
    public void setName(String name) {
-      storage.put(VAULTNAME_KEY, name != null ? name : "");
+      storage.put(STORENAME_KEY, name != null ? name : "");
    }
    
    /**

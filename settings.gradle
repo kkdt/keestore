@@ -4,4 +4,6 @@
  * See LICENSE at the project root directory.
  */
 
+include 'keecore'
+
 rootProject.name = 'keestore'

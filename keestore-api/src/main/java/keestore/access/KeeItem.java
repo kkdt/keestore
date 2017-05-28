@@ -10,6 +10,7 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -134,7 +135,11 @@ public class KeeItem implements Kee, JSONAware, JSONStreamAware
     * @return
     */
    public Set<String> keys() {
-      return storage.keySet();
+      Set<String> copy = new HashSet<>();
+      synchronized(storage) {
+         copy.addAll(storage.keySet());
+      }
+      return copy;
    }
    
    /**
@@ -145,7 +150,11 @@ public class KeeItem implements Kee, JSONAware, JSONStreamAware
     * @return
     */
    public Collection<String> values() {
-      return storage.values();
+      Collection<String> copy = new HashSet<>();
+      synchronized(storage) {
+         copy.addAll(storage.values());
+      }
+      return copy;
    }
    
    /**
