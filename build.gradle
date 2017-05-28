@@ -3,39 +3,50 @@
  * This file is part of 'keestore' which is released under the MIT license.
  * See LICENSE at the project root directory.
  */
+
 buildscript {
-   repositories {
-       mavenCentral()
+   repositories { 
+      mavenLocal() 
+      mavenCentral()
    }
    dependencies {
-       classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.8.RELEASE")
+      classpath 'kkdt.gradle.eclipseone:eclipseone:0.1'
    }
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
-//apply plugin: 'spring-boot'
+apply plugin: 'kkdt.gradle.eclipseone'
 
-description = 'Key-value storage with crypto'
+description = 'Key-value storage with crypto (master build)'
+group = 'keestore'
 version = '0.1'
 
-eclipse {
-   classpath {
-      downloadSources=true
+allprojects { project ->
+   repositories {
+      mavenCentral()
+   }
+   
+   task showConfigurations(description: 'Prints all configurations') {
+      doLast {
+         project.configurations.each {
+            println '   ' + it + ' ' + it.description
+         }
+      }
    }
 }
 
-repositories {
-    jcenter()
+// the root project does not have any build artifacts
+build.doLast {
+   delete buildDir
 }
 
-dependencies {
-   compile 'log4j:log4j:1.2.17'
-   compile 'com.googlecode.json-simple:json-simple:1.1.1'
+//dependencies {
+//   compile 'log4j:log4j:1.2.17'
 //   compile 'com.netflix.hollow:hollow:2.5.2'
 //   compile 'org.springframework.boot:spring-boot:1.2.5.RELEASE'
 //   compile 'com.nimbusds:nimbus-jose-jwt:4.23'
-   
-   testCompile 'junit:junit:4.12'
-}
+//   testCompile 'junit:junit:4.12'
+//}
+// https://discuss.gradle.org/t/multi-project-custom-build/10482
 

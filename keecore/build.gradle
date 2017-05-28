@@ -1,0 +1,16 @@
+/**
+ * Copyright (C) 2017 thinh ho
+ * This file is part of 'keestore' which is released under the MIT license.
+ * See LICENSE at the project root directory.
+ */
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+description = 'keestore core library'
+version = '0.1'
+
+dependencies {
+   compile 'com.googlecode.json-simple:json-simple:1.1.1'
+   testCompile 'junit:junit:4.10'
+}
