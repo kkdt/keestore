@@ -38,208 +38,216 @@ import keestore.crypto.KeyCrypto;
  *
  */
 public abstract class KeyCryptoUnitTest {
-   /**
-    * Exception to be thrown around in unit tests.
-    *
-    */
-   protected static final class ExpectedCryptoException extends CryptoException {
-      private static final long serialVersionUID = 2176114514661570549L;
-   }
-   
-   protected static final String charset = "UTF-8";
-   protected static final String message = "this is a secret message!";
-   protected static final String defaultKeyPairAlgorithm = "RSA";
-   protected static final int defaultKeyPairKeySize = 1024;
-   
-   protected KeyCrypto crypto;
-   protected Crypto cryptoContext;
-   protected String email;
-   protected String password;
-   
-   /**
-    * <p>
-    * Each unit test is expected to be testing a specific crypto implementation.
-    * </p>
-    * 
-    * @return
-    */
-   abstract CryptoEngine getCryptoEngine();
-   /**
-    * <p>
-    * The password value since this can be a crypto-dependent value (i.e. the
-    * length may be a specific length).
-    * </p>
-    * 
-    * @return
-    */
-   abstract String getPasswordValue();
-   /**
-    * <p>
-    * Routine for re-loading the secret key outside of the underlying
-    * {@code CryptoEngine} implementation.
-    * </p>
-    *  
-    * @return
-    * @throws Exception
-    */
-   abstract byte[] loadSecretKey() throws Exception;
-   
-   /**
-    * <p>
-    * Specific unit tests can override accordingly.
-    * </p>
-    * 
-    * @throws Exception
-    */
-   void initCryptoContext() throws Exception {
-      cryptoContext = crypto.createCrypto(getPasswordValue(), defaultKeyPairAlgorithm, defaultKeyPairKeySize);
-   }
-   
-   /**
-    * <p>
-    * Unit tests can override if the crypto context has a different implementation.
-    * </p>
-    * 
-    * @return
-    * @throws InvalidKeySpecException
-    * @throws NoSuchAlgorithmException
-    */
-   PublicKey getPublicKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
-      KeySpec spec = new X509EncodedKeySpec(cryptoContext.getPublicKey());
-      PublicKey publicKey = KeyFactory.getInstance(defaultKeyPairAlgorithm)
-         .generatePublic(spec);
-      return publicKey;
-   }
-   
-   /**
-    * <p>
-    * Unit tests can override if the crypto context has a different implementation.
-    * </p>
-    * 
-    * @return
-    * @throws InvalidKeySpecException
-    * @throws NoSuchAlgorithmException
-    */
-   PrivateKey getPrivateKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
-      KeySpec spec = new PKCS8EncodedKeySpec(cryptoContext.getPrivateKey());
-      PrivateKey privateKey = KeyFactory.getInstance(defaultKeyPairAlgorithm).generatePrivate(spec);
-      return privateKey;
-   }
-   
-   @Before
-   public void init() throws Exception {
-      // known email
-      email = "userkeygeneration@test.com";
-      
-      // user password is only known to user
-      password = new String(getPasswordValue().getBytes(charset), charset);
-      
-      // implementation of the crypto
-      crypto = new KeyCrypto(getCryptoEngine());
-      
-      initCryptoContext();
-   }
-   
-   @Test
-   public void initTest() {
-      assertTrue("Unit test must have a CryptoEngine implementation", getCryptoEngine() != null);
-      assertTrue(crypto != null);
-      assertTrue("Crypto Context not initialized", cryptoContext != null);
-      assertTrue(email != null && email.length() > 0);
-      assertTrue(password != null && password.length() > 0);
-      assertTrue(password.equals(getPasswordValue()));
-   }
-   
-   @Test
-   public void testCryptoEngineEncryptDecrypt() throws CryptoException, UnsupportedEncodingException {
-      byte[] encrypted = crypto.encrypt(cryptoContext.getSecretKey(), message.getBytes(charset));
-      assertTrue(encrypted != null && encrypted.length > 0);
-      
-      byte[] decrypted = crypto.decrypt(cryptoContext.getSecretKey(), encrypted);
-      assertTrue(decrypted != null && decrypted.length > 0);
-      assertTrue("Decrypted message does not match original message", new String(decrypted, charset).equals(message));
-   }
-   
-   @Test(expected = ExpectedCryptoException.class)
-   public void testCryptoEngineInvalidKeyDecrypt() throws CryptoException, UnsupportedEncodingException {
-      byte[] encrypted = crypto.encrypt(cryptoContext.getSecretKey(), message.getBytes(charset));
-      assertTrue(encrypted != null && encrypted.length > 0);
-      
-      try {
-         byte[] decrypted = crypto.decrypt("invalidcryptosymmetrickey".getBytes(charset), encrypted);
-         assertTrue("Decryption should not have gotten this far: " + new String(decrypted), false);
-      } catch (Exception e) {
-         throw new ExpectedCryptoException();
-      }
-   }
-   
-   @Test
-   public void testStandardPublicKeyEncryption() throws Exception {
-      // encrypt the message using the public key
-      final Cipher encryptCipher = Cipher.getInstance(defaultKeyPairAlgorithm);
-      encryptCipher.init(Cipher.ENCRYPT_MODE, getPublicKey());
-      byte[] encrypted = encryptCipher.doFinal(message.getBytes(charset));
-      assertTrue(encrypted != null && encrypted.length > 0);
-      
-      // decrypt using private key
-      final Cipher decryptCipher = Cipher.getInstance(defaultKeyPairAlgorithm);
-      decryptCipher.init(Cipher.DECRYPT_MODE, getPrivateKey());
-      byte[] decrypted = decryptCipher.doFinal(encrypted);
-      assertTrue(decrypted != null && decrypted.length > 0);
-      assertTrue("Decrypted message does not match original message", new String(decrypted, charset).equals(message));
-   }
-   
-   protected SecretKey getSecretKey(String algorithm, String password) throws UnsupportedEncodingException {
-      byte[] key = password.getBytes(charset);
-      SecretKey k = new SecretKeySpec(key, 0, key.length, algorithm);
-      return k;
-   }
-   
-   protected void doSymmetricEncryptDecryptWithInitializingVector(String algorithm, String password, String cipherTransformation, int ivLength) throws Exception {
-      byte[] encrypted = null;
-      byte[] decrypted = null;
-      
-      SecretKey k = getSecretKey(algorithm, password);
-      
-      // encrypt
-      Cipher encryptCipher = Cipher.getInstance(cipherTransformation);
-      encryptCipher.init(Cipher.ENCRYPT_MODE, k, new IvParameterSpec(createInitializingVector(ivLength)));
-      encrypted = encryptCipher.doFinal(message.getBytes(charset));
-      
-      // decrypt (different IV)
-      Cipher cipher1 = Cipher.getInstance(cipherTransformation);
-      cipher1.init(Cipher.DECRYPT_MODE, k, new IvParameterSpec(createInitializingVector(ivLength)));
-      decrypted = cipher1.doFinal(encrypted);
-      assertTrue("Decrypted message should not match because a different IV was used during decryption", !(new String(decrypted, charset).equals(message)));
-      
-      // decrypt (same IV)
-      Cipher cipher2 = Cipher.getInstance(cipherTransformation);
-      cipher2.init(Cipher.DECRYPT_MODE, k, new IvParameterSpec(encryptCipher.getIV()));
-      decrypted = cipher2.doFinal(encrypted);
-      assertTrue("Decrypted message does not match original message", new String(decrypted, charset).equals(message));
-      
-      // decrypt (differet key)
-      Cipher cipher3 = Cipher.getInstance(cipherTransformation);
-      cipher3.init(Cipher.DECRYPT_MODE, getSecretKey(k.getAlgorithm(), generateBadPassword(password)), new IvParameterSpec(encryptCipher.getIV()));
-      decrypted = cipher3.doFinal(encrypted);
-      assertTrue("Decrypted message should not match original message", !(new String(decrypted, charset).equals(message)));
-   }
-   
-   protected String generateBadPassword(String password) throws UnsupportedEncodingException {
-      byte[] array = password.getBytes(charset);
-      for(int i = 0; i < array.length; i++) {
-         array[i] = 'a';
-      }
-      return new String(array, charset);
-   }
-   
-   protected byte[] createInitializingVector(int size) {
-      byte[] unique = new byte[size];
-      try {
-         SecureRandom.getInstanceStrong().nextBytes(unique);
-      } catch (NoSuchAlgorithmException e) {
-         throw new CryptoException(e);
-      }
-      return unique;
-   }
+    /**
+     * Exception to be thrown around in unit tests.
+     *
+     */
+    protected static final class ExpectedCryptoException extends CryptoException {
+        private static final long serialVersionUID = 2176114514661570549L;
+    }
+
+    protected static final String charset = "UTF-8";
+    protected static final String message = "this is a secret message!";
+    protected static final String defaultKeyPairAlgorithm = "RSA";
+    protected static final int defaultKeyPairKeySize = 1024;
+
+    protected KeyCrypto crypto;
+    protected Crypto cryptoContext;
+    protected String email;
+    protected String password;
+
+    /**
+     * <p>
+     * Each unit test is expected to be testing a specific crypto
+     * implementation.
+     * </p>
+     * 
+     * @return
+     */
+    abstract CryptoEngine getCryptoEngine();
+
+    /**
+     * <p>
+     * The password value since this can be a crypto-dependent value (i.e. the
+     * length may be a specific length).
+     * </p>
+     * 
+     * @return
+     */
+    abstract String getPasswordValue();
+
+    /**
+     * <p>
+     * Routine for re-loading the secret key outside of the underlying
+     * {@code CryptoEngine} implementation.
+     * </p>
+     * 
+     * @return
+     * @throws Exception
+     */
+    abstract byte[] loadSecretKey() throws Exception;
+
+    /**
+     * <p>
+     * Specific unit tests can override accordingly.
+     * </p>
+     * 
+     * @throws Exception
+     */
+    void initCryptoContext() throws Exception {
+        cryptoContext = crypto.createCrypto(getPasswordValue(), defaultKeyPairAlgorithm, defaultKeyPairKeySize);
+    }
+
+    /**
+     * <p>
+     * Unit tests can override if the crypto context has a different
+     * implementation.
+     * </p>
+     * 
+     * @return
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
+     */
+    PublicKey getPublicKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
+        KeySpec spec = new X509EncodedKeySpec(cryptoContext.getPublicKey());
+        PublicKey publicKey = KeyFactory.getInstance(defaultKeyPairAlgorithm).generatePublic(spec);
+        return publicKey;
+    }
+
+    /**
+     * <p>
+     * Unit tests can override if the crypto context has a different
+     * implementation.
+     * </p>
+     * 
+     * @return
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
+     */
+    PrivateKey getPrivateKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
+        KeySpec spec = new PKCS8EncodedKeySpec(cryptoContext.getPrivateKey());
+        PrivateKey privateKey = KeyFactory.getInstance(defaultKeyPairAlgorithm).generatePrivate(spec);
+        return privateKey;
+    }
+
+    @Before
+    public void init() throws Exception {
+        // known email
+        email = "userkeygeneration@test.com";
+
+        // user password is only known to user
+        password = new String(getPasswordValue().getBytes(charset), charset);
+
+        // implementation of the crypto
+        crypto = new KeyCrypto(getCryptoEngine());
+
+        initCryptoContext();
+    }
+
+    @Test
+    public void initTest() {
+        assertTrue("Unit test must have a CryptoEngine implementation", getCryptoEngine() != null);
+        assertTrue(crypto != null);
+        assertTrue("Crypto Context not initialized", cryptoContext != null);
+        assertTrue(email != null && email.length() > 0);
+        assertTrue(password != null && password.length() > 0);
+        assertTrue(password.equals(getPasswordValue()));
+    }
+
+    @Test
+    public void testCryptoEngineEncryptDecrypt() throws CryptoException, UnsupportedEncodingException {
+        byte[] encrypted = crypto.encrypt(cryptoContext.getSecretKey(), message.getBytes(charset));
+        assertTrue(encrypted != null && encrypted.length > 0);
+
+        byte[] decrypted = crypto.decrypt(cryptoContext.getSecretKey(), encrypted);
+        assertTrue(decrypted != null && decrypted.length > 0);
+        assertTrue("Decrypted message does not match original message", new String(decrypted, charset).equals(message));
+    }
+
+    @Test(expected = ExpectedCryptoException.class)
+    public void testCryptoEngineInvalidKeyDecrypt() throws CryptoException, UnsupportedEncodingException {
+        byte[] encrypted = crypto.encrypt(cryptoContext.getSecretKey(), message.getBytes(charset));
+        assertTrue(encrypted != null && encrypted.length > 0);
+
+        try {
+            byte[] decrypted = crypto.decrypt("invalidcryptosymmetrickey".getBytes(charset), encrypted);
+            assertTrue("Decryption should not have gotten this far: " + new String(decrypted), false);
+        } catch (Exception e) {
+            throw new ExpectedCryptoException();
+        }
+    }
+
+    @Test
+    public void testStandardPublicKeyEncryption() throws Exception {
+        // encrypt the message using the public key
+        final Cipher encryptCipher = Cipher.getInstance(defaultKeyPairAlgorithm);
+        encryptCipher.init(Cipher.ENCRYPT_MODE, getPublicKey());
+        byte[] encrypted = encryptCipher.doFinal(message.getBytes(charset));
+        assertTrue(encrypted != null && encrypted.length > 0);
+
+        // decrypt using private key
+        final Cipher decryptCipher = Cipher.getInstance(defaultKeyPairAlgorithm);
+        decryptCipher.init(Cipher.DECRYPT_MODE, getPrivateKey());
+        byte[] decrypted = decryptCipher.doFinal(encrypted);
+        assertTrue(decrypted != null && decrypted.length > 0);
+        assertTrue("Decrypted message does not match original message", new String(decrypted, charset).equals(message));
+    }
+
+    protected SecretKey getSecretKey(String algorithm, String password) throws UnsupportedEncodingException {
+        byte[] key = password.getBytes(charset);
+        SecretKey k = new SecretKeySpec(key, 0, key.length, algorithm);
+        return k;
+    }
+
+    protected void doSymmetricEncryptDecryptWithInitializingVector(String algorithm, String password,
+            String cipherTransformation, int ivLength) throws Exception {
+        byte[] encrypted = null;
+        byte[] decrypted = null;
+
+        SecretKey k = getSecretKey(algorithm, password);
+
+        // encrypt
+        Cipher encryptCipher = Cipher.getInstance(cipherTransformation);
+        encryptCipher.init(Cipher.ENCRYPT_MODE, k, new IvParameterSpec(createInitializingVector(ivLength)));
+        encrypted = encryptCipher.doFinal(message.getBytes(charset));
+
+        // decrypt (different IV)
+        Cipher cipher1 = Cipher.getInstance(cipherTransformation);
+        cipher1.init(Cipher.DECRYPT_MODE, k, new IvParameterSpec(createInitializingVector(ivLength)));
+        decrypted = cipher1.doFinal(encrypted);
+        assertTrue("Decrypted message should not match because a different IV was used during decryption",
+                !(new String(decrypted, charset).equals(message)));
+
+        // decrypt (same IV)
+        Cipher cipher2 = Cipher.getInstance(cipherTransformation);
+        cipher2.init(Cipher.DECRYPT_MODE, k, new IvParameterSpec(encryptCipher.getIV()));
+        decrypted = cipher2.doFinal(encrypted);
+        assertTrue("Decrypted message does not match original message", new String(decrypted, charset).equals(message));
+
+        // decrypt (differet key)
+        Cipher cipher3 = Cipher.getInstance(cipherTransformation);
+        cipher3.init(Cipher.DECRYPT_MODE, getSecretKey(k.getAlgorithm(), generateBadPassword(password)),
+                new IvParameterSpec(encryptCipher.getIV()));
+        decrypted = cipher3.doFinal(encrypted);
+        assertTrue("Decrypted message should not match original message",
+                !(new String(decrypted, charset).equals(message)));
+    }
+
+    protected String generateBadPassword(String password) throws UnsupportedEncodingException {
+        byte[] array = password.getBytes(charset);
+        for (int i = 0; i < array.length; i++) {
+            array[i] = 'a';
+        }
+        return new String(array, charset);
+    }
+
+    protected byte[] createInitializingVector(int size) {
+        byte[] unique = new byte[size];
+        try {
+            SecureRandom.getInstanceStrong().nextBytes(unique);
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoException(e);
+        }
+        return unique;
+    }
 }

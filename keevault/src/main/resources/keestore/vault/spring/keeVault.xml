@@ -1,0 +1,20 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+   
+   <bean id="applicationConsole" 
+      class="keestore.vault.ui.VaultConsoleWindow">
+   </bean>
+   
+   <bean id="keyCrypto" class="keestore.crypto.KeyCrypto">
+      <constructor-arg ref="cryptoengine"/>
+   </bean>
+   
+   <bean id="cryptoengine" class="keestore.crypto.DESedeCryptoEngine"/>
+   
+   <bean id="vaultContext" class="keestore.vault.VaultContext" init-method="init">
+      <property name="fileLocation" value="${user.home}/.keestore"/>
+      <property name="cryptoEngine" ref="keyCrypto"/>
+   </bean>
+</beans>

@@ -8,23 +8,48 @@ buildscript {
    repositories { 
       mavenCentral()
       maven {
-         url "https://plugins.gradle.org/m2/"
+         url 'https://github.com/kkdt/mavenrepo/raw/master'
       }
    }
    dependencies {
-      classpath "gradle.plugin.kkdt.gradle.eclipseone:eclipseone:0.3"
+      classpath "kkdt.gradle.eclipseone:eclipseone:0.5"
    }
 }
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'kkdt.gradle.eclipseone'
 
 description = 'Key-value storage with crypto (master build)'
 group = 'keestore'
 version = '0.1'
 
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'kkdt.gradle.eclipseone'
+
+eclipse {
+   classpath {
+      downloadJavadoc = true
+      downloadSources = true
+   }
+   
+   project {
+      resourceFilter {
+         appliesTo = 'FOLDERS'
+         type = 'EXCLUDE_ALL'
+         matcher {
+           id = 'org.eclipse.ui.ide.multiFilter'
+           arguments = '1.0-name-matches-false-false-build'
+         }
+       }
+   }
+}
+
+subprojects {
+   apply plugin: 'java'
+   apply plugin: 'maven'
+}
+
 allprojects { project ->
+   version = '0.1'
+   
    repositories {
       mavenCentral()
       mavenLocal()

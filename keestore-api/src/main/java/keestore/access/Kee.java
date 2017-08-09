@@ -5,6 +5,7 @@
  */
 package keestore.access;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -15,7 +16,29 @@ import java.util.Map;
  * @author thinh ho
  *
  */
-public interface Kee {
+public interface Kee extends Serializable {
+    Object addItem(Kee item);
+    void clear();
+    /**
+     * <p>
+     * Add the key-value pair.
+     * </p>
+     * 
+     * @param key
+     * @param value
+     * @return the previous value, if exist, or null.
+     */
+    String put(String key, String value);
+    /**
+     * <p>
+     * Remove the item with the specified key and return its value.
+     * </p>
+     * 
+     * @param key
+     * @return
+     * @throws IllegalArgumentException if the key to remove is the identifier key.
+     */
+    String remove(String key);
    /**
     * <p>
     * The underlying representation is a map with keys expected to be Strings,
@@ -25,6 +48,8 @@ public interface Kee {
     * @return
     */
    Map<String, Object> toMap();
+   Kee toKee();
+   Kee toKee(Map<String, Object> data);
    /**
     * <p>
     * Each {@code Kee} model has a unique identifier.
@@ -33,4 +58,16 @@ public interface Kee {
     * @return
     */
    String getId();
+   void setId(String id);
+   String idKey();
+   /**
+    * <p>
+    * A human-readable name.
+    * </p>
+    * 
+    * @return
+    */
+   String getName();
+   void setName(String name);
+   String nameKey();
 }

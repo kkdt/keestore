@@ -23,6 +23,15 @@ public interface CryptoEngine {
    public static final String charSet = "UTF-8";
    /**
     * <p>
+    * Generate a random byte array of <code>size</code>.
+    * </p>
+    * 
+    * @param size
+    * @return
+    */
+   public byte[] randomBytes(int size);
+   /**
+    * <p>
     * Encrypt the specified payload using the specified symmetric key.
     * </p>
     * 

@@ -17,75 +17,75 @@ import java.io.Serializable;
  *
  */
 public class Crypto implements Serializable {
-   private static final long serialVersionUID = -8078081637447939945L;
-   
-   private byte[] privateKey;
-   private byte[] publicKey;
-   private byte[] secretKey;
+    private static final long serialVersionUID = -8078081637447939945L;
 
-   /**
-    * <p>
-    * The symmetric key.
-    * </p>
-    * 
-    * @return
-    */
-   public byte[] getSecretKey() {
-      return secretKey;
-   }
+    private byte[] privateKey;
+    private byte[] publicKey;
+    private byte[] secretKey;
 
-   /**
-    * <p>
-    * The symmetric key.
-    * </p>
-    * 
-    * @param secretKey
-    */
-   public void setSecretKey(byte[] secretKey) {
-      this.secretKey = secretKey;
-   }
+    /**
+     * <p>
+     * The symmetric key.
+     * </p>
+     * 
+     * @return
+     */
+    public byte[] getSecretKey() {
+        return secretKey;
+    }
 
-   /**
-    * <p>
-    * The public/private key.
-    * </p>
-    * 
-    * @return
-    */
-   public byte[] getPublicKey() {
-      return publicKey;
-   }
+    /**
+     * <p>
+     * The symmetric key.
+     * </p>
+     * 
+     * @param secretKey
+     */
+    public void setSecretKey(byte[] secretKey) {
+        this.secretKey = secretKey;
+    }
 
-   /**
-    * <p>
-    * The public/private key.
-    * </p>
-    * 
-    * @param publicKey
-    */
-   public void setPublicKey(byte[] publicKey) {
-      this.publicKey = publicKey;
-   }
+    /**
+     * <p>
+     * The public/private key.
+     * </p>
+     * 
+     * @return
+     */
+    public byte[] getPublicKey() {
+        return publicKey;
+    }
 
-   /**
-    * <p>
-    * The public/private key.
-    * </p>
-    * 
-    * @return
-    */
-   public byte[] getPrivateKey() {
-      return privateKey;
-   }
+    /**
+     * <p>
+     * The public/private key.
+     * </p>
+     * 
+     * @param publicKey
+     */
+    public void setPublicKey(byte[] publicKey) {
+        this.publicKey = publicKey;
+    }
 
-   /**
-    * <p>
-    * The public/private key.
-    * </p>
-    * 
-    * @param privateKey
-    */
-   public void setPrivateKey(byte[] privateKey) {
-      this.privateKey = privateKey;
-   }
+    /**
+     * <p>
+     * The public/private key.
+     * </p>
+     * 
+     * @return
+     */
+    public byte[] getPrivateKey() {
+        return privateKey;
+    }
+
+    /**
+     * <p>
+     * The public/private key.
+     * </p>
+     * 
+     * @param privateKey
+     */
+    public void setPrivateKey(byte[] privateKey) {
+        this.privateKey = privateKey;
+    }
 }

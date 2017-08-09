@@ -14,19 +14,20 @@ package keestore.crypto;
  *
  */
 public class CryptoException extends RuntimeException {
-   private static final long serialVersionUID = -3141700076596904272L;
-   
-   public CryptoException() {}
-   
-   public CryptoException(Throwable t) {
-      super(t);
-   }
-   
-   public CryptoException(String err, Throwable t) {
-      super(err, t);
-   }
-   
-   public CryptoException(String err) {
-      super(err);
-   }
+    private static final long serialVersionUID = -3141700076596904272L;
+
+    public CryptoException() {
+    }
+
+    public CryptoException(Throwable t) {
+        super(t);
+    }
+
+    public CryptoException(String err, Throwable t) {
+        super(err, t);
+    }
+
+    public CryptoException(String err) {
+        super(err);
+    }
 }

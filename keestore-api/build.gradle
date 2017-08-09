@@ -4,11 +4,7 @@
  * See LICENSE at the project root directory.
  */
 
-apply plugin: 'java'
-apply plugin: 'maven'
-
 description = 'keestore core library'
-version = '0.1'
 
 dependencies {
    compile 'com.googlecode.json-simple:json-simple:1.1.1'
