@@ -18,28 +18,26 @@ import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 
-import keestore.vault.KeeVaultContextInitialized;
 import keestore.vault.Util;
-import keestore.vault.VaultContext;
+import keestore.vault.crypto.VaultCrypto;
+import keestore.vault.crypto.VaultCryptoInitialized;
 
 /**
  * The main application window that can be initialized within a Spring
- * Application Context and be notified of an {@code KeeVaultContextInitialized}
+ * Application Context and be notified of an {@code VaultCryptoInitialized}
  * event which will then, fully initialize the window.
  * 
  * @author thinh ho
  *
  */
-public class VaultConsoleWindow extends JFrame implements ApplicationListener<KeeVaultContextInitialized> {
+public class VaultConsoleWindow extends JFrame implements ApplicationListener<VaultCryptoInitialized> {
     private static final long serialVersionUID = 6173573611734161069L;
     private static final Logger logger = Logger.getLogger(VaultConsoleWindow.class);
     private static final String title = "keestore: Vault";
 
-    @Autowired(required = true)
-    private VaultContext vaultContext;
+    private VaultCrypto crypto;
     private Vaults vaults;
     private JMenuBar menubar;
 
@@ -47,6 +45,7 @@ public class VaultConsoleWindow extends JFrame implements ApplicationListener<Ke
         super(title);
         initComponents();
         layoutComponents();
+        setLocationRelativeTo(null);
     }
 
     private JMenuBar createMenuBar() {
@@ -96,19 +95,20 @@ public class VaultConsoleWindow extends JFrame implements ApplicationListener<Ke
         Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler(VaultConsoleWindow.this));
         Util.withEventQueue(() -> {
             logger.info("Initializing main view");
-            vaults.setVaultContext(this.vaultContext);
+            vaults.setVaultCrypto(this.crypto);
             vaults.init();
             pack();
             
             setResizable(false);
             setVisible(true);
-            logger.info("Autowired vault context: " + vaultContext);
         });
     }
 
     @Override
-    public void onApplicationEvent(KeeVaultContextInitialized event) {
-        logger.info("Initializing display with vault conext: " + event.getVaultContext());
+    public void onApplicationEvent(VaultCryptoInitialized event) {
+        logger.info("Initializing display with vault conext: " 
+            + event.getCrypto() + ", source: " + event.getSource());
+        this.crypto = event.getCrypto();
         init();
     }
 }

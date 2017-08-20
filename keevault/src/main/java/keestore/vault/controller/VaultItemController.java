@@ -19,6 +19,7 @@ import java.util.function.Supplier;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import keestore.crypto.Crypto;
 import keestore.vault.Util;
 import keestore.vault.VaultItemEditor;
 import keestore.vault.model.VaultItem;
@@ -190,7 +191,8 @@ public class VaultItemController {
             if((editor.getOriginalItem() == null || !editor.getOriginalItem().getKey().equals(item.getKey())) 
                 && isDuplicateItem().test(item)) 
             {
-                return "Cannot add/update " + item.getKey() +", duplicate key";
+                String key = new String(Crypto.decode(item.getKey()).get());
+                return "Cannot add/update " + key +", duplicate key";
             }
             return "";
         };

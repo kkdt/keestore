@@ -10,6 +10,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -19,6 +23,9 @@ import javax.swing.event.TableModelListener;
 import org.apache.log4j.Logger;
 
 import keestore.access.Kee;
+import keestore.access.KeeItem;
+import keestore.crypto.Crypto;
+import keestore.vault.crypto.VaultCrypto;
 import keestore.vault.model.Vault;
 import keestore.vault.ui.table.KeeTable;
 import keestore.vault.ui.table.KeeTableModel;
@@ -33,7 +40,8 @@ import keestore.vault.ui.table.KeeTableModel;
 public class VaultTableController {
     private static final Logger logger = Logger.getLogger(VaultTableController.class);
     
-    final private KeeTable table;
+    private final KeeTable table;
+    private VaultCrypto crypto;
     
     /**
      * Must instantiate with a table to control.
@@ -44,6 +52,10 @@ public class VaultTableController {
         this.table = table;
     }
     
+    public void setVaultCrypto(VaultCrypto crypto) {
+        this.crypto = crypto;
+    }
+
     /**
      * Attach a table mouse listener that calls back to the specified controller
      * to take action. 
@@ -99,6 +111,53 @@ public class VaultTableController {
                 }
             }
         };
+    }
+    
+    /**
+     * <p>
+     * Load all values into the table using the underlying crypto.
+     * </p>
+     * 
+     * @param table
+     * @throws IOException
+     */
+    public void loadTable(KeeTable table) throws IOException {
+        if(crypto != null) {
+            List<Vault> values = crypto.loadVault();
+            values.forEach(v -> {
+                table.addKee(v);
+            });
+        }
+    }
+    
+    /**
+     * <p>
+     * Encrypt all values in the specified table via the underlying crypto.
+     * </p>
+     * 
+     * @param table
+     */
+    public void handleEncrypt(KeeTable table) {
+        if(crypto == null) {
+            throw new IllegalStateException("Vault crypto not configured for encrypt");
+        }
+        
+        // decode all values
+        List<Kee> decoded = table.getAll().stream().map(k -> {
+            // find all keys not the id or name keys
+            Set<String> keys = k.toMap().keySet().stream().filter(a -> {
+                return !a.equals(k.nameKey()) && !a.equals(k.idKey());
+            }).collect(Collectors.toSet());
+            // create a copy and decode the values
+            KeeItem copy = new KeeItem(k.toMap());
+            for(String key : keys) {
+                String _value = copy.get(key);
+                copy.put(new String(Crypto.decode(key).get()), new String(Crypto.decode(_value).get()));
+                copy.remove(key);
+            }
+            return copy;
+        }).collect(Collectors.toList());
+        crypto.encrypt(decoded);
     }
     
     /**

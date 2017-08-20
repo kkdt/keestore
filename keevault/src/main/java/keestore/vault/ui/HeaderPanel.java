@@ -7,17 +7,20 @@ package keestore.vault.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
 import keestore.vault.Util;
-import keestore.vault.VaultContext;
+import keestore.vault.crypto.VaultCrypto;
 
 /**
  * Informational header panel in the main window.
@@ -32,18 +35,25 @@ class HeaderPanel extends JPanel {
 
     private SimpleDateFormat dateformat;
     private JLabel timeFld;
-    private JLabel registrationLlb;
-    private JLabel applicationKeyLbl;
+    private JLabel vaultLbl;
+    private JLabel secretKeyLbl;
+    private JLabel soureLbl;
+    private JLabel applicationIdLbl;
+    private JLabel pubPriLbl;
+    private JPanel controls;
 
     public HeaderPanel() {
         initComponents();
         layoutComponents();
     }
     
-    public void setVaultContext(VaultContext context) {
+    public void setVaultCrypto(VaultCrypto crypto) {
         Util.withEventQueue(() -> {
-            registrationLlb.setText(context.getRegistrationFile().getPath());
-            applicationKeyLbl.setText(context.getApplicationSecretKeyFile().getPath());
+            secretKeyLbl.setText(crypto.getSecretKey());
+            soureLbl.setText(crypto.getSource().getPath());
+            applicationIdLbl.setText(crypto.getSeed());
+            pubPriLbl.setText(crypto.hasPublicPrivateKeys() ? "Valid" : "N/A");
+            vaultLbl.setText(crypto.getVault().getAbsolutePath());
             validate();
         });
     }
@@ -53,50 +63,128 @@ class HeaderPanel extends JPanel {
             timeFld.setText(formatDateTime(date));
         });
     }
+    
+    public void withAction(String action, ActionListener l) {
+        JButton b = new JButton(action);
+        b.addActionListener(l);
+        controls.add(b);
+        Util.withEventQueue(() -> {
+            controls.repaint();
+        });
+    }
 
     private void layoutComponents() {
+        int x = 0, y = 0;
         JPanel panel0 = new JPanel(new GridBagLayout());
         panel0.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Registration"));
         GridBagConstraints c0 = new GridBagConstraints();
         {
             c0.anchor = GridBagConstraints.LINE_START;
             c0.fill = GridBagConstraints.HORIZONTAL;
-            c0.gridx = 0;
-            c0.gridy = 0;
+            c0.gridx = x++;
+            c0.gridy = y;
             c0.gridwidth = 1;
-            c0.ipadx = 5;
-            c0.ipady = 5;
-            panel0.add(new JLabel("User registration: "), c0);
+            c0.ipadx = 3;
+            c0.ipady = 3;
+            panel0.add(new JLabel("Source "), c0);
         }
         {
             c0.anchor = GridBagConstraints.LINE_START;
             c0.fill = GridBagConstraints.HORIZONTAL;
-            c0.gridx = 1;
-            c0.gridy = 0;
+            c0.gridx = x++;
+            c0.gridy = y;
             c0.gridwidth = 1;
-            c0.ipadx = 5;
-            c0.ipady = 5;
-            panel0.add(registrationLlb, c0);
+            c0.ipadx = 3;
+            c0.ipady = 3;
+            panel0.add(soureLbl, c0);
+        }
+        y++;
+        x = 0;
+        {
+            c0.anchor = GridBagConstraints.LINE_START;
+            c0.fill = GridBagConstraints.HORIZONTAL;
+            c0.gridx = x++;
+            c0.gridy = y;
+            c0.gridwidth = 1;
+            c0.ipadx = 3;
+            c0.ipady = 3;
+            panel0.add(new JLabel("Vault "), c0);
         }
         {
             c0.anchor = GridBagConstraints.LINE_START;
             c0.fill = GridBagConstraints.HORIZONTAL;
-            c0.gridx = 0;
-            c0.gridy = 1;
+            c0.gridx = x++;
+            c0.gridy = y;
             c0.gridwidth = 1;
-            c0.ipadx = 5;
-            c0.ipady = 5;
-            panel0.add(new JLabel("Application secret: "), c0);
+            c0.ipadx = 3;
+            c0.ipady = 3;
+            panel0.add(vaultLbl, c0);
+        }
+        y++;
+        x = 0;
+        {
+            c0.anchor = GridBagConstraints.LINE_START;
+            c0.fill = GridBagConstraints.HORIZONTAL;
+            c0.gridx = x++;
+            c0.gridy = y;
+            c0.gridwidth = 1;
+            c0.ipadx = 3;
+            c0.ipady = 3;
+            panel0.add(new JLabel("Secret Key "), c0);
         }
         {
             c0.anchor = GridBagConstraints.LINE_START;
             c0.fill = GridBagConstraints.HORIZONTAL;
-            c0.gridx = 1;
-            c0.gridy = 1;
+            c0.gridx = x++;
+            c0.gridy = y;
             c0.gridwidth = 1;
-            c0.ipadx = 5;
-            c0.ipady = 5;
-            panel0.add(applicationKeyLbl, c0);
+            c0.ipadx = 3;
+            c0.ipady = 3;
+            panel0.add(secretKeyLbl, c0);
+        }
+        y++;
+        x = 0;
+        {
+            c0.anchor = GridBagConstraints.LINE_START;
+            c0.fill = GridBagConstraints.HORIZONTAL;
+            c0.gridx = x++;
+            c0.gridy = y;
+            c0.gridwidth = 1;
+            c0.ipadx = 3;
+            c0.ipady = 3;
+            panel0.add(new JLabel("Pub/Pri Keys "), c0);
+        }
+        {
+            c0.anchor = GridBagConstraints.LINE_START;
+            c0.fill = GridBagConstraints.HORIZONTAL;
+            c0.gridx = x++;
+            c0.gridy = y;
+            c0.gridwidth = 1;
+            c0.ipadx = 3;
+            c0.ipady = 3;
+            panel0.add(pubPriLbl, c0);
+        }
+        y++;
+        x = 0;
+        {
+            c0.anchor = GridBagConstraints.LINE_START;
+            c0.fill = GridBagConstraints.HORIZONTAL;
+            c0.gridx = x++;
+            c0.gridy = y;
+            c0.gridwidth = 1;
+            c0.ipadx = 3;
+            c0.ipady = 3;
+            panel0.add(new JLabel("Application ID "), c0);
+        }
+        {
+            c0.anchor = GridBagConstraints.LINE_START;
+            c0.fill = GridBagConstraints.HORIZONTAL;
+            c0.gridx = x++;
+            c0.gridy = y;
+            c0.gridwidth = 1;
+            c0.ipadx = 3;
+            c0.ipady = 3;
+            panel0.add(applicationIdLbl, c0);
         }
         
         setLayout(new GridBagLayout());
@@ -105,6 +193,7 @@ class HeaderPanel extends JPanel {
             c.anchor = GridBagConstraints.PAGE_START;
             c.gridx = 0;
             c.gridy = 0;
+            c.gridwidth = 2;
             add(timeFld, c);
         }
         {
@@ -112,7 +201,17 @@ class HeaderPanel extends JPanel {
             c.fill = GridBagConstraints.HORIZONTAL;
             c.gridx = 0;
             c.gridy = 1;
+            c.gridwidth = 1;
             add(panel0, c);
+        }
+        {
+            c.anchor = GridBagConstraints.LINE_START;
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx = 1;
+            c.gridy = 1;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.BOTH;
+            add(controls, c);
         }
     }
 
@@ -120,8 +219,16 @@ class HeaderPanel extends JPanel {
         dateformat = new SimpleDateFormat(defaultDateTimeFormat);
         timeFld = new JLabel("");
         timeFld.setText(formatDateTime(new Date()));
-        registrationLlb = new JLabel("");
-        applicationKeyLbl = new JLabel("");
+        secretKeyLbl = new JLabel("");
+        soureLbl = new JLabel("");
+        applicationIdLbl = new JLabel("");
+        pubPriLbl = new JLabel("");
+        vaultLbl = new JLabel("");
+        
+        controls = new JPanel();
+        BoxLayout layout = new BoxLayout(controls, BoxLayout.Y_AXIS);
+        controls.setLayout(layout);
+        controls.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Crypto Controls"));
     }
 
     private String formatDateTime(Date date) {

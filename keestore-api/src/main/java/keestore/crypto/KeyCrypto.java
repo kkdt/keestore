@@ -73,4 +73,14 @@ public class KeyCrypto implements CryptoEngine {
     public byte[] randomBytes(int size) {
         return cryptoEngine.randomBytes(size);
     }
+
+    @Override
+    public byte[] decrypt(PrivateKey privateKey, byte[] payload) {
+        return cryptoEngine.decrypt(privateKey, payload);
+    }
+
+    @Override
+    public byte[] decrypt(PublicKey publicKey, byte[] payload) {
+        return cryptoEngine.decrypt(publicKey, payload);
+    }
 }

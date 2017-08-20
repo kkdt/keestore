@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,9 +23,9 @@ import javax.swing.JScrollPane;
 import org.apache.log4j.Logger;
 
 import keestore.vault.Util;
-import keestore.vault.VaultContext;
 import keestore.vault.controller.VaultController;
 import keestore.vault.controller.VaultTableController;
+import keestore.vault.crypto.VaultCrypto;
 import keestore.vault.model.VaultAccess;
 import keestore.vault.ui.table.KeeTable;
 
@@ -41,7 +42,7 @@ public class Vaults extends JPanel {
     private static final Logger logger = Logger.getLogger(Vaults.class);
 
     private final JFrame parent;
-    private VaultContext context;
+    private VaultCrypto crypto;
     private VaultController vaultController;
     private VaultTableController tableController;
     private HeaderPanel header;
@@ -56,15 +57,16 @@ public class Vaults extends JPanel {
         initComponents();
         layoutComponents();
     }
-
-    public void setVaultContext(VaultContext context) {
-        this.context = context;
+    
+    void setVaultCrypto(VaultCrypto crypto) {
+        this.crypto = crypto;
+        this.tableController.setVaultCrypto(crypto);
     }
 
     public void init() {
         scheduleTimer();
         initListeners();
-        header.setVaultContext(context);
+        header.setVaultCrypto(crypto);
         logger.info("Vaults initialized");
     }
 
@@ -109,6 +111,10 @@ public class Vaults extends JPanel {
      * Sets up all the view-specific and datamodel-specific controller callbacks.
      */
     private void initListeners() {
+        header.withAction("Encrypt", event -> {
+            tableController.handleEncrypt(table);
+        });
+        
         Consumer<KeeTable> enableButtons = t -> {
             openBtn.setEnabled(t.getRowCount() > 0 && t.getSelectedRowCount() == 1);
             deleteBtn.setEnabled(t.getRowCount() > 0 && t.getSelectedRowCount() == 1);
@@ -140,6 +146,12 @@ public class Vaults extends JPanel {
         createBtn.addActionListener(tableController.actionListener(parent, vaultController));
         deleteBtn.addActionListener(tableController.actionListener(parent, vaultController));
         openBtn.addActionListener(tableController.actionListener(parent, vaultController));
+        
+        try {
+            tableController.loadTable(table);
+        } catch (IOException e) {
+            throw new IllegalStateException("Cannot load vaults: " + e.getMessage(), e);
+        }
     }
 
     private void scheduleTimer() {

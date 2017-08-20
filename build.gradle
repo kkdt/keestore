@@ -17,7 +17,6 @@ buildscript {
 }
 
 description = 'Key-value storage with crypto (master build)'
-group = 'keestore'
 version = '0.1'
 
 apply plugin: 'java'
@@ -45,6 +44,8 @@ eclipse {
 subprojects {
    apply plugin: 'java'
    apply plugin: 'maven'
+   
+   group = 'keestore'
 }
 
 allprojects { project ->
@@ -68,13 +69,3 @@ allprojects { project ->
 build.doLast {
    delete buildDir
 }
-
-//dependencies {
-//   compile 'log4j:log4j:1.2.17'
-//   compile 'com.netflix.hollow:hollow:2.5.2'
-//   compile 'org.springframework.boot:spring-boot:1.2.5.RELEASE'
-//   compile 'com.nimbusds:nimbus-jose-jwt:4.23'
-//   testCompile 'junit:junit:4.12'
-//}
-// https://discuss.gradle.org/t/multi-project-custom-build/10482
-

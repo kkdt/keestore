@@ -20,10 +20,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import keestore.crypto.Crypto;
 import keestore.vault.Util;
 import keestore.vault.VaultItemEditor;
 import keestore.vault.model.VaultItem;
 
+/**
+ * Save/edit a value item (key/value pair).
+ * 
+ * @author thinh ho
+ *
+ */
 public class VaultItemEditorDialog extends JDialog implements VaultItemEditor {
     private static final long serialVersionUID = -606137868735907379L;
     
@@ -37,9 +44,9 @@ public class VaultItemEditorDialog extends JDialog implements VaultItemEditor {
 
     public VaultItemEditorDialog(Window parent, String title) {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-        setLocationRelativeTo(parent);
         initComponents();
         layoutComponents();
+        setLocationRelativeTo(parent);
     }
     
     @Override
@@ -60,16 +67,18 @@ public class VaultItemEditorDialog extends JDialog implements VaultItemEditor {
         VaultItem item = new VaultItem();
         item.setEncryptKey(encryptKey.isSelected());
         item.setEncryptValue(encryptValue.isSelected());
-        item.setKey(key.getText());
-        item.setValue(value.getText());
+        item.setKey(Crypto.encode(key.getText().getBytes()).get());
+        item.setValue(Crypto.encode(value.getText().getBytes()).get());
         return item;
     }
     
     public VaultItemEditorDialog withItem(VaultItem item) {
         this.originalItem = item;
         Util.withEventQueue(() -> {
-            key.setText(item.getKey() != null ? item.getKey() : "");
-            value.setText(item.getValue() != null ? item.getValue() : "");
+            String _key = item.getKey();
+            String _value = item.getValue();
+            key.setText(item.getKey() != null ? new String(Crypto.decode(_key).get()) : "");
+            value.setText(item.getValue() != null ? new String(Crypto.decode(_value).get()) : "");
             encryptKey.setSelected(item.isEncryptKey());
             encryptValue.setSelected(item.isEncryptValue());
         });

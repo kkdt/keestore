@@ -4,7 +4,7 @@
  * See LICENSE at the project root directory.
  */
 
-description = 'KeeVault: Thick-client key-value storage'
+description = 'keevault: Thick-client key-value storage'
 
 buildscript {
    repositories {

@@ -59,11 +59,11 @@ public class VaultEditDialog extends JDialog implements VaultEditor {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.itemController = new VaultItemController();
         this.vaultController = vaultController;
-        this.setLocationRelativeTo(parent);
         this.item = item;
         initComponents();
         layoutComponents();
         initListeners();
+        this.setLocationRelativeTo(null);
     }
 
     private void initComponents() {
@@ -252,7 +252,7 @@ public class VaultEditDialog extends JDialog implements VaultEditor {
         });
         
         table.getModel().addTableModelListener(itemController.tableModelListener());
-        table.addMouseListener(itemController.mouseListener(getOwner()));
+        table.addMouseListener(itemController.mouseListener(this));
         saveBtn.addActionListener(vaultController.actionListener(this, itemController));
         deleteBtn.addActionListener(itemController.tableActionListener(table));
         addBtn.addActionListener(e -> {

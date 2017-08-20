@@ -125,15 +125,11 @@ public abstract class DefaultCryptoEngine implements CryptoEngine {
 
     @Override
     public Crypto createCrypto(String secret, String keyPairAlgorithm, int keyPairSize) throws CryptoException {
-        Crypto crypto = new Crypto();
+        Crypto crypto = null;
         try {
             byte[] secretKey = generateKey(secret);
-            crypto.setSecretKey(secretKey);
             KeyPair keypair = generateKeyPair(keyPairAlgorithm, keyPairSize);
-            PrivateKey priv = keypair.getPrivate();
-            PublicKey pub = keypair.getPublic();
-            crypto.setPrivateKey(priv.getEncoded());
-            crypto.setPublicKey(pub.getEncoded());
+            crypto = new Crypto(secretKey, keypair);
         } catch (Exception e) {
             throw new CryptoException(e);
         }
@@ -164,6 +160,32 @@ public abstract class DefaultCryptoEngine implements CryptoEngine {
             throw new CryptoException(e);
         }
         return encrypted;
+    }
+    
+    @Override
+    public byte[] decrypt(PrivateKey privateKey, byte[] payload) {
+        byte[] decrypted = null;
+        try {
+            final Cipher decryptCipher = Cipher.getInstance(privateKey.getAlgorithm());
+            decryptCipher.init(Cipher.DECRYPT_MODE, privateKey);
+            decrypted = decryptCipher.doFinal(payload);
+        } catch (Exception e) {
+            throw new CryptoException(e);
+        }
+        return decrypted;
+    }
+    
+    @Override
+    public byte[] decrypt(PublicKey publicKey, byte[] payload) {
+        byte[] decrypted = null;
+        try {
+            final Cipher decryptCipher = Cipher.getInstance(publicKey.getAlgorithm());
+            decryptCipher.init(Cipher.DECRYPT_MODE, publicKey);
+            decrypted = decryptCipher.doFinal(payload);
+        } catch (Exception e) {
+            throw new CryptoException(e);
+        }
+        return decrypted;
     }
 
     /**

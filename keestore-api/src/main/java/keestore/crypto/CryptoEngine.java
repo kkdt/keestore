@@ -86,6 +86,8 @@ public interface CryptoEngine {
     * @return
     */
    public byte[] encrypt(PublicKey publicKey, byte[] payload);
+   public byte[] decrypt(PrivateKey privateKey, byte[] payload);
+   public byte[] decrypt(PublicKey publicKey, byte[] payload);
    /**
     * <p>
     * Encrypt the specified payload using the private key.
