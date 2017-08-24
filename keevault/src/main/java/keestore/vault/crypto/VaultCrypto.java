@@ -40,7 +40,7 @@ public class VaultCrypto {
     private final CryptoEngine cryptoEngine;
     private final Crypto crypto;
     private String id;
-    private final String seed;
+    private final String salt;
     private File registration;
     
     /**
@@ -56,7 +56,7 @@ public class VaultCrypto {
      */
     public VaultCrypto(CryptoEngine cryptoEngine, byte[] secretKey, PublicKey publicKey, PrivateKey privateKey) {
         byte[] encSecretKey = cryptoEngine.encrypt(publicKey, secretKey);
-        this.seed = Crypto.encode(cryptoEngine.randomBytes(8)).get();
+        this.salt = Crypto.encode(cryptoEngine.randomBytes(8)).get();
         this.cryptoEngine = cryptoEngine;
         this.crypto = new Crypto(encSecretKey, new KeyPair(publicKey, privateKey));
     }
@@ -78,7 +78,7 @@ public class VaultCrypto {
         PublicKey publicKey = Crypto.buildPublicKey(Crypto.decode(_registration.get("publicKey")).get()).get();
         byte[] encSecretKey = Crypto.decode(_registration.get("secretKey")).get();
         this.id = _registration.getId();
-        this.seed = _registration.get("seed");
+        this.salt = _registration.get("salt");
         this.cryptoEngine = cryptoEngine;
         this.crypto = new Crypto(encSecretKey, new KeyPair(publicKey, privateKey));
         this.registration = registration;
@@ -253,8 +253,8 @@ public class VaultCrypto {
         return registration;
     }
     
-    public String getSeed() {
-        return seed;
+    public String getSalt() {
+        return salt;
     }
     
     /**
@@ -293,7 +293,7 @@ public class VaultCrypto {
         registration.put("privateKey", Crypto.encode(crypto.getKeyPair().getPrivate().getEncoded()).get());
         registration.put("publicKey", Crypto.encode(crypto.getKeyPair().getPublic().getEncoded()).get());
         registration.put("secretKey", Crypto.encode(crypto.getSecretKey()).get());
-        registration.put("seed", seed);
+        registration.put("salt", salt);
         return registration;
     }
     

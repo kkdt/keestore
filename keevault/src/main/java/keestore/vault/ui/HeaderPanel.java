@@ -38,7 +38,7 @@ class HeaderPanel extends JPanel {
     private JLabel vaultLbl;
     private JLabel secretKeyLbl;
     private JLabel soureLbl;
-    private JLabel applicationIdLbl;
+    private JLabel saltLbl;
     private JLabel pubPriLbl;
     private JPanel controls;
 
@@ -51,7 +51,7 @@ class HeaderPanel extends JPanel {
         Util.withEventQueue(() -> {
             secretKeyLbl.setText(crypto.getSecretKey());
             soureLbl.setText(crypto.getSource().getPath());
-            applicationIdLbl.setText(crypto.getSeed());
+            saltLbl.setText(crypto.getSalt());
             pubPriLbl.setText(crypto.hasPublicPrivateKeys() ? "Valid" : "N/A");
             vaultLbl.setText(crypto.getVault().getAbsolutePath());
             validate();
@@ -174,7 +174,7 @@ class HeaderPanel extends JPanel {
             c0.gridwidth = 1;
             c0.ipadx = 3;
             c0.ipady = 3;
-            panel0.add(new JLabel("Application ID "), c0);
+            panel0.add(new JLabel("Salt "), c0);
         }
         {
             c0.anchor = GridBagConstraints.LINE_START;
@@ -184,7 +184,7 @@ class HeaderPanel extends JPanel {
             c0.gridwidth = 1;
             c0.ipadx = 3;
             c0.ipady = 3;
-            panel0.add(applicationIdLbl, c0);
+            panel0.add(saltLbl, c0);
         }
         
         setLayout(new GridBagLayout());
@@ -221,7 +221,7 @@ class HeaderPanel extends JPanel {
         timeFld.setText(formatDateTime(new Date()));
         secretKeyLbl = new JLabel("");
         soureLbl = new JLabel("");
-        applicationIdLbl = new JLabel("");
+        saltLbl = new JLabel("");
         pubPriLbl = new JLabel("");
         vaultLbl = new JLabel("");
         

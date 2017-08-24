@@ -71,14 +71,14 @@ public abstract class DefaultCryptoEngine implements CryptoEngine {
     public byte[] generateKey(String secret) throws CryptoException {
         byte[] key = null;
         try {
-            SecretKey spec = new SecretKeySpec(secret.getBytes(CryptoEngine.charSet), getSecretKeyAlgorithm());
+            SecretKey spec = new SecretKeySpec(Crypto.decode(secret).get(), getSecretKeyAlgorithm());
             key = spec.getEncoded();
         } catch (Exception e) {
             throw new CryptoException(e);
         }
         return key;
     }
-
+    
     @Override
     public byte[] encrypt(byte[] key, byte[] payload) {
         byte[] encrypted = null;
@@ -195,8 +195,7 @@ public abstract class DefaultCryptoEngine implements CryptoEngine {
      * </p>
      * 
      * @param keyPairAlgorithm
-     * @param keyPairSize
-     *            (number of bits)
+     * @param keyPairSize (number of bits)
      * @return
      * @throws NoSuchAlgorithmException
      */

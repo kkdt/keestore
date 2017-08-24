@@ -26,11 +26,6 @@ import javax.crypto.spec.SecretKeySpec;
 import org.junit.Before;
 import org.junit.Test;
 
-import keestore.crypto.Crypto;
-import keestore.crypto.CryptoEngine;
-import keestore.crypto.CryptoException;
-import keestore.crypto.KeyCrypto;
-
 /**
  * Base unit tests.
  * 
@@ -95,7 +90,7 @@ public abstract class KeyCryptoUnitTest {
      * @throws Exception
      */
     void initCryptoContext() throws Exception {
-        cryptoContext = crypto.createCrypto(getPasswordValue(), defaultKeyPairAlgorithm, defaultKeyPairKeySize);
+        cryptoContext = crypto.createCrypto(password, defaultKeyPairAlgorithm, defaultKeyPairKeySize);
     }
 
     /**
@@ -151,7 +146,6 @@ public abstract class KeyCryptoUnitTest {
         assertTrue("Crypto Context not initialized", cryptoContext != null);
         assertTrue(email != null && email.length() > 0);
         assertTrue(password != null && password.length() > 0);
-        assertTrue(password.equals(getPasswordValue()));
     }
 
     @Test
@@ -160,6 +154,40 @@ public abstract class KeyCryptoUnitTest {
         assertTrue(encrypted != null && encrypted.length > 0);
 
         byte[] decrypted = crypto.decrypt(cryptoContext.getSecretKey(), encrypted);
+        assertTrue(decrypted != null && decrypted.length > 0);
+        assertTrue("Decrypted message does not match original message", new String(decrypted, charset).equals(message));
+    }
+    
+    @Test
+    public void testCryptoEngineGetRandomSecretKey1() {
+        byte[] key = crypto.generateKey();
+        assertTrue(key != null && key.length > 0);
+    }
+    
+    @Test
+    public void testCryptoEngineGetRandomSecretKey2() {
+        SecretKey key = crypto.randomKey();
+        assertTrue(key != null);
+    }
+    
+    @Test
+    public void testCryptoEngineEncryptDecryptRandomSecretKey1() throws CryptoException, UnsupportedEncodingException {
+        byte[] key = crypto.generateKey();
+        byte[] encrypted = crypto.encrypt(key, message.getBytes(charset));
+        assertTrue(encrypted != null && encrypted.length > 0);
+        
+        byte[] decrypted = crypto.decrypt(key, encrypted);
+        assertTrue(decrypted != null && decrypted.length > 0);
+        assertTrue("Decrypted message does not match original message", new String(decrypted, charset).equals(message));
+    }
+    
+    @Test
+    public void testCryptoEngineEncryptDecryptRandomSecretKey2() throws CryptoException, UnsupportedEncodingException {
+        SecretKey key = crypto.randomKey();
+        byte[] encrypted = crypto.encrypt(key.getEncoded(), message.getBytes(charset));
+        assertTrue(encrypted != null && encrypted.length > 0);
+        
+        byte[] decrypted = crypto.decrypt(key.getEncoded(), encrypted);
         assertTrue(decrypted != null && decrypted.length > 0);
         assertTrue("Decrypted message does not match original message", new String(decrypted, charset).equals(message));
     }
@@ -192,9 +220,9 @@ public abstract class KeyCryptoUnitTest {
         assertTrue(decrypted != null && decrypted.length > 0);
         assertTrue("Decrypted message does not match original message", new String(decrypted, charset).equals(message));
     }
-
+    
     protected SecretKey getSecretKey(String algorithm, String password) throws UnsupportedEncodingException {
-        byte[] key = password.getBytes(charset);
+        byte[] key = Crypto.decode(password).get();
         SecretKey k = new SecretKeySpec(key, 0, key.length, algorithm);
         return k;
     }
@@ -226,19 +254,11 @@ public abstract class KeyCryptoUnitTest {
 
         // decrypt (differet key)
         Cipher cipher3 = Cipher.getInstance(cipherTransformation);
-        cipher3.init(Cipher.DECRYPT_MODE, getSecretKey(k.getAlgorithm(), generateBadPassword(password)),
+        cipher3.init(Cipher.DECRYPT_MODE, getSecretKey(k.getAlgorithm(), getPasswordValue()),
                 new IvParameterSpec(encryptCipher.getIV()));
         decrypted = cipher3.doFinal(encrypted);
         assertTrue("Decrypted message should not match original message",
                 !(new String(decrypted, charset).equals(message)));
-    }
-
-    protected String generateBadPassword(String password) throws UnsupportedEncodingException {
-        byte[] array = password.getBytes(charset);
-        for (int i = 0; i < array.length; i++) {
-            array[i] = 'a';
-        }
-        return new String(array, charset);
     }
 
     protected byte[] createInitializingVector(int size) {

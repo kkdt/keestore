@@ -8,6 +8,8 @@ package keestore.crypto;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import javax.crypto.SecretKey;
+
 /**
  * <p>
  * The main crypto engine for encryption and decryption routines.
@@ -62,6 +64,8 @@ public interface CryptoEngine {
     * @throws CryptoException
     */
    public byte[] generateKey(String secret) throws CryptoException;
+   public byte[] generateKey() throws CryptoException;
+   public SecretKey randomKey() throws CryptoException;
    /**
     * <p>
     * Create the new crypto context.

@@ -8,6 +8,8 @@ package keestore.crypto;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import javax.crypto.SecretKey;
+
 /**
  * <p>
  * Main crypto engine object to use and abstracts out the underlying crypto
@@ -82,5 +84,15 @@ public class KeyCrypto implements CryptoEngine {
     @Override
     public byte[] decrypt(PublicKey publicKey, byte[] payload) {
         return cryptoEngine.decrypt(publicKey, payload);
+    }
+
+    @Override
+    public byte[] generateKey() throws CryptoException {
+        return cryptoEngine.generateKey();
+    }
+
+    @Override
+    public SecretKey randomKey() throws CryptoException {
+        return cryptoEngine.randomKey();
     }
 }

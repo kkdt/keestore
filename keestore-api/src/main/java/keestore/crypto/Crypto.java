@@ -16,8 +16,9 @@ import java.security.Signature;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
 import java.util.function.Supplier;
+
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * <p>
@@ -40,11 +41,11 @@ public class Crypto implements Serializable {
     }
     
     public static Supplier<String> encode(final byte[] k) {
-        return () -> Base64.getEncoder().encodeToString(k);
+        return () -> Base64.encodeBase64String(k);
     }
     
     public static Supplier<byte[]> decode(final String k) {
-        return () -> Base64.getDecoder().decode(k);
+        return () -> Base64.decodeBase64(k);
     }
     
     public static Supplier<PublicKey> buildPublicKey(final byte[] encoded) {

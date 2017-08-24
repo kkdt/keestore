@@ -15,10 +15,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.Test;
 
-import keestore.crypto.CryptoEngine;
-import keestore.crypto.CryptoException;
-import keestore.crypto.DESedeCryptoEngine;
-
 /**
  * 3DES unit tests.
  * 
@@ -26,7 +22,6 @@ import keestore.crypto.DESedeCryptoEngine;
  *
  */
 public class DESedeCryptoEngineTest extends KeyCryptoUnitTest {
-    private static final String passwordValue = "h3ll0WoR!d12345678901234";
     private static final String algorithm = "DESede";
 
     @Override
@@ -36,7 +31,7 @@ public class DESedeCryptoEngineTest extends KeyCryptoUnitTest {
 
     @Override
     String getPasswordValue() {
-        return passwordValue;
+        return Crypto.encode(getCryptoEngine().randomBytes(24)).get();
     }
 
     @Override
@@ -72,7 +67,7 @@ public class DESedeCryptoEngineTest extends KeyCryptoUnitTest {
         final String cipherTransformation = "DESede/CTR/NoPadding";
         final int ivSize = 8;
         try {
-            doSymmetricEncryptDecryptWithInitializingVector(algorithm, passwordValue, cipherTransformation, ivSize);
+            doSymmetricEncryptDecryptWithInitializingVector(algorithm, getPasswordValue(), cipherTransformation, ivSize);
         } catch (Exception e) {
             throw new CryptoException(e);
         }
@@ -84,7 +79,7 @@ public class DESedeCryptoEngineTest extends KeyCryptoUnitTest {
         final String cipherTransformation = "DESede/CTR/PKCS5Padding";
         final int ivSize = 8;
         try {
-            doSymmetricEncryptDecryptWithInitializingVector(algorithm, passwordValue, cipherTransformation, ivSize);
+            doSymmetricEncryptDecryptWithInitializingVector(algorithm, getPasswordValue(), cipherTransformation, ivSize);
         } catch (Exception e) {
             throw new CryptoException(e);
         }

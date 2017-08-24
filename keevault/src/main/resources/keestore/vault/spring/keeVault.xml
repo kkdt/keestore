@@ -7,15 +7,14 @@
 
     <bean id="cryptoEngine" class="keestore.crypto.KeyCrypto">
         <constructor-arg>
-            <bean class="keestore.crypto.DESedeCryptoEngine"></bean>
+            <bean class="keestore.crypto.AesCryptoEngine"></bean>
         </constructor-arg>
     </bean>
 
     <bean class="keestore.vault.crypto.VaultCryptoInitializer">
         <property name="cryptoEngine" ref="cryptoEngine" />
         <property name="registration" value="${user.home}/.keestore/keevault_registration" />
-        <property name="symmetricKeySizeBytes" value="16" />
-        <property name="publicKeySizeBits" value="1024" />
+        <property name="publicKeySizeBits" value="2048" />
         
     </bean>
 </beans>

@@ -25,7 +25,6 @@ import keestore.crypto.CryptoException;
  */
 public class AesCryptoEngineTest extends KeyCryptoUnitTest {
     private static final String algorithm = "AES";
-    private static final String passwordValue = "h3ll0WoR!d123456";
 
     @Override
     CryptoEngine getCryptoEngine() {
@@ -34,12 +33,12 @@ public class AesCryptoEngineTest extends KeyCryptoUnitTest {
 
     @Override
     String getPasswordValue() {
-        return passwordValue;
+        return Crypto.encode(getCryptoEngine().randomBytes(16)).get();
     }
 
     @Override
     byte[] loadSecretKey() throws Exception {
-        SecretKeySpec spec = new SecretKeySpec(passwordValue.getBytes(CryptoEngine.charSet), algorithm);
+        SecretKeySpec spec = new SecretKeySpec(crypto.generateKey(password), algorithm);
         return spec.getEncoded();
     }
 
@@ -68,7 +67,7 @@ public class AesCryptoEngineTest extends KeyCryptoUnitTest {
         final String cipherTransformation = "AES/CTR/NoPadding";
         final int ivSize = 16;
         try {
-            doSymmetricEncryptDecryptWithInitializingVector(algorithm, passwordValue, cipherTransformation, ivSize);
+            doSymmetricEncryptDecryptWithInitializingVector(algorithm, getPasswordValue(), cipherTransformation, ivSize);
         } catch (Exception e) {
             throw new CryptoException(e);
         }
@@ -80,7 +79,7 @@ public class AesCryptoEngineTest extends KeyCryptoUnitTest {
         final String cipherTransformation = "AES/CTR/PKCS5Padding";
         final int ivSize = 16;
         try {
-            doSymmetricEncryptDecryptWithInitializingVector(algorithm, passwordValue, cipherTransformation, ivSize);
+            doSymmetricEncryptDecryptWithInitializingVector(algorithm, getPasswordValue(), cipherTransformation, ivSize);
         } catch (Exception e) {
             throw new CryptoException(e);
         }
@@ -92,7 +91,7 @@ public class AesCryptoEngineTest extends KeyCryptoUnitTest {
         final String cipherTransformation = "AES/CFB/NoPadding";
         final int ivSize = 16;
         try {
-            doSymmetricEncryptDecryptWithInitializingVector(algorithm, passwordValue, cipherTransformation, ivSize);
+            doSymmetricEncryptDecryptWithInitializingVector(algorithm, getPasswordValue(), cipherTransformation, ivSize);
         } catch (Exception e) {
             throw new CryptoException(e);
         }
@@ -104,10 +103,9 @@ public class AesCryptoEngineTest extends KeyCryptoUnitTest {
         final String cipherTransformation = "AES/OFB/NoPadding";
         final int ivSize = 16;
         try {
-            doSymmetricEncryptDecryptWithInitializingVector(algorithm, passwordValue, cipherTransformation, ivSize);
+            doSymmetricEncryptDecryptWithInitializingVector(algorithm, getPasswordValue(), cipherTransformation, ivSize);
         } catch (Exception e) {
             throw new CryptoException(e);
         }
     }
-
 }

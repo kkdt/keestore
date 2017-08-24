@@ -37,7 +37,6 @@ public class VaultCryptoInitializer implements ApplicationContextAware, Initiali
     private ApplicationContext applicationContext;
     private String registration;
     private CryptoEngine cryptoEngine;
-    private int symmetricKeySizeBytes = 16;
     private int publicKeySizeBits = 1024;
     
     public void setPublicKeySizeBits(int publicKeySizeBits) {
@@ -50,10 +49,6 @@ public class VaultCryptoInitializer implements ApplicationContextAware, Initiali
 
     public void setCryptoEngine(CryptoEngine cryptoEngine) {
         this.cryptoEngine = cryptoEngine;
-    }
-
-    public void setSymmetricKeySizeBytes(int symmetricKeySizeBytes) {
-        this.symmetricKeySizeBytes = symmetricKeySizeBytes;
     }
 
     @Override
@@ -90,7 +85,7 @@ public class VaultCryptoInitializer implements ApplicationContextAware, Initiali
     private VaultCrypto createVaultCrypto() {
         VaultCrypto crypto = null;
         try {
-           String secret = Crypto.encode(cryptoEngine.randomBytes(symmetricKeySizeBytes)).get();
+           String secret = Crypto.encode(cryptoEngine.generateKey()).get();
            Crypto c = cryptoEngine.createCrypto(secret, "RSA", publicKeySizeBits);
            crypto = new VaultCrypto(cryptoEngine, c.getSecretKey(), c.getKeyPair().getPublic(), c.getKeyPair().getPrivate());
         } catch (Exception e) {
