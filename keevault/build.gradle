@@ -7,15 +7,21 @@
 description = 'keevault: Thick-client key-value storage'
 
 buildscript {
-   repositories {
-       mavenCentral()
-   }
-   dependencies {
-      classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.8.RELEASE")
-   }
+    repositories { 
+        mavenCentral() 
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies { 
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.1.8.RELEASE" 
+        classpath "gradle.plugin.edu.sc.seis:macAppBundle:2.1.7"
+    }
 }
 
+apply plugin: 'distribution'
 apply plugin: 'spring-boot'
+apply plugin: "edu.sc.seis.macAppBundle"
 
 jar {
     manifest {
@@ -31,15 +37,23 @@ jar {
     }
 }
 
-dependencies {
-   compile project(':keestore-api')
-   
-   compile 'log4j:log4j:1.2.17'
-   compile 'commons-logging:commons-logging:1.1.3'
-   
-   compile('org.springframework.boot:spring-boot-starter:1.3.3.RELEASE') {
-      exclude module: 'spring-boot-starter-logging'
-      exclude module: 'spring-boot-starter-log4j'
-   }
+macAppBundle {
+    appName = 'keevault'
+    mainClassName = "keestore.vault.KeeVault"
+    icon = "src/macapp/Default.icns"
+    bundleJRE = true
+    backgroundImage = "src/macapp/Default.png"
+    javaProperties.put("apple.laf.useScreenMenuBar", "true")
 }
 
+dependencies {
+    compile project(':keestore-api')
+
+    compile 'log4j:log4j:1.2.17'
+    compile 'commons-logging:commons-logging:1.1.3'
+
+    compile('org.springframework.boot:spring-boot-starter:1.3.3.RELEASE') {
+        exclude module: 'spring-boot-starter-logging'
+        exclude module: 'spring-boot-starter-log4j'
+    }
+}

@@ -47,11 +47,18 @@ Decryption occurs on the local encrypted datastore and loaded into the UI. The I
 3. Compare `signature`
 
 ## Building
-Gradle builds the application and uses the `spring-boot` plugin to package the application into an executable jar file. 
+Gradle builds the application and uses the following plugins to build distributable artifacts.
+
+1. [Gradle](https://docs.gradle.org/current/userguide/distribution_plugin.html) `distribution`
+2. [Spring](https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-gradle-plugin.html) `spring-boot`
+3. [crotwell](https://github.com/crotwell) [MacApp Bundle](https://github.com/crotwell/gradle-macappbundle)
 
 ```
 gradle clean build
-java -jar keevault/build/libs/keevault-0.1.jar
 ```
 
-A checked-in jar is located at `run` for convenience.
+Navigate to `keevault/build/distributions` where there will be the following files for running **keevault** in Mac/Unix/Windows environments:
+
+1. `dmg` file to install and run in Mac OSX
+2. `tar` file packaged with the Unix and Windows runscripts along with all necessary dependencies
+3. `zip` file which contains the same contents as the `tar` file
