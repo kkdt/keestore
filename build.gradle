@@ -17,7 +17,7 @@ buildscript {
 }
 
 description = 'Key-value storage with crypto (master build)'
-version = '0.1'
+version = '0.2'
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
@@ -51,7 +51,7 @@ subprojects {
 }
 
 allprojects { project ->
-   version = '0.1'
+   version = rootProject.version
    
    repositories {
       mavenCentral()
