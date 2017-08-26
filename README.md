@@ -1,9 +1,9 @@
 # Keestore
 
->A couple of discussions from [Cryptography Stack Exchange](https://crypto.stackexchange.com/) led to exploring cryptography. In addition, I ran into [KeePass](https://www.codeproject.com/Articles/5489/KeePass-Password-Safe) and [1Password's white paper](https://1password.com/files/1Password%20for%20Teams%20White%20Paper.pdf) and started coding for practice. Initially starting with the crypto provisions using strictly Java but plan to move to other libraries when I get a better understanding of the basic crypto topics.
+>A couple of discussions from [Cryptography Stack Exchange](https://crypto.stackexchange.com/) led to exploring cryptography. In addition, I ran into [KeePass](https://www.codeproject.com/Articles/5489/KeePass-Password-Safe) and [1Password's white paper](https://1password.com/files/1Password%20for%20Teams%20White%20Paper.pdf) and started coding for practice. The goal is to implement purely with Java crypto initially, then move to other libraries when I get a better understanding basic crypto.
 
 ## Overview
-This project is a crypto tool that uses public/private keys with an additional symmetric key for encryption and decryption. **keevault** is a standalone, Java thick-client that provides the UI for the user to encrypt/decrypt key-value model data. The encrypted payload along with the user's key set are stored locally in the user's home directory.
+This project is a crypto tool that uses public/private keys with an additional symmetric key for encryption and decryption. **keevault** is a standalone, Java thick-client that provides the UI for the user to encrypt/decrypt key-value model data. The encrypted payload along with the user's key set are stored locally in the user's home directory. All encryption and decryption occurs locally on the user's machine; therefore, the crypto for keevault does not address related risks with "across the wire" data transmission.
 
 ## Crypto
 
