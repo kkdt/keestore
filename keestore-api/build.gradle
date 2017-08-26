@@ -1,0 +1,15 @@
+/**
+ * Copyright (C) 2017 thinh ho
+ * This file is part of 'keestore' which is released under the MIT license.
+ * See LICENSE at the project root directory.
+ */
+
+description = 'keestore core library'
+
+dependencies {
+   compile 'com.googlecode.json-simple:json-simple:1.1.1'
+   compile 'commons-codec:commons-codec:1.10'
+   
+   testCompile 'com.nimbusds:nimbus-jose-jwt:4.23'
+   testCompile 'junit:junit:4.10'
+}
