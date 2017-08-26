@@ -16,6 +16,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -87,14 +89,18 @@ public class VaultEditDialog extends JDialog implements VaultEditor {
                     VaultItem model = new VaultItem();
                     model.setKey(e.getKey());
                     model.setValue((String)e.getValue());
-                    model.setEncryptKey(true);
-                    model.setEncryptValue(true);
                     return model;
                 }).forEach(i -> {
                     table.addItem(i);
                     itemController.getVaultItems().add(i);
                 });
         }
+        
+        // menu
+        JMenuBar menubar = new JMenuBar();
+        JMenu help = Util.createHelpMenu(VaultEditDialog.class, "vaultItem");
+        menubar.add(help);
+        this.setJMenuBar(menubar);
     }
 
     private void enableTableControls(boolean enable) {

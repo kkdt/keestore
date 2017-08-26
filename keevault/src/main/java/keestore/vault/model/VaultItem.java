@@ -17,8 +17,6 @@ package keestore.vault.model;
 public class VaultItem {
     private String key;
     private String value;
-    private boolean encryptKey;
-    private boolean encryptValue;
 
     public String getValue() {
         return value;
@@ -26,22 +24,6 @@ public class VaultItem {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public boolean isEncryptKey() {
-        return encryptKey;
-    }
-
-    public void setEncryptKey(boolean encryptKey) {
-        this.encryptKey = encryptKey;
-    }
-
-    public boolean isEncryptValue() {
-        return encryptValue;
-    }
-
-    public void setEncryptValue(boolean encryptValue) {
-        this.encryptValue = encryptValue;
     }
 
     public String getKey() {

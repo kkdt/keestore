@@ -36,6 +36,7 @@ public class VaultTableCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value,
         boolean isSelected, boolean hasFocus, int row, int column) 
     {
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         setValue(hideValue ? defaultValue : value);
         String _value = (String)value;
         setToolTipText(hideValue ? "Table must be in 'Edit' mode in order to view" 

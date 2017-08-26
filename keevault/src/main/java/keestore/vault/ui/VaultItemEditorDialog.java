@@ -14,7 +14,6 @@ import java.awt.Window;
 import java.util.function.BiConsumer;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -36,8 +35,6 @@ public class VaultItemEditorDialog extends JDialog implements VaultItemEditor {
     
     private JTextField key;
     private JTextField value;
-    private JCheckBox encryptKey;
-    private JCheckBox encryptValue;
     private JButton saveBtn;
     private JButton cancelBtn;
     private VaultItem originalItem;
@@ -65,8 +62,6 @@ public class VaultItemEditorDialog extends JDialog implements VaultItemEditor {
     @Override
     public VaultItem getVaultItem() {
         VaultItem item = new VaultItem();
-        item.setEncryptKey(encryptKey.isSelected());
-        item.setEncryptValue(encryptValue.isSelected());
         item.setKey(Crypto.encode(key.getText().getBytes()).get());
         item.setValue(Crypto.encode(value.getText().getBytes()).get());
         return item;
@@ -79,8 +74,6 @@ public class VaultItemEditorDialog extends JDialog implements VaultItemEditor {
             String _value = item.getValue();
             key.setText(item.getKey() != null ? new String(Crypto.decode(_key).get()) : "");
             value.setText(item.getValue() != null ? new String(Crypto.decode(_value).get()) : "");
-            encryptKey.setSelected(item.isEncryptKey());
-            encryptValue.setSelected(item.isEncryptValue());
         });
         return this;
     }
@@ -121,14 +114,6 @@ public class VaultItemEditorDialog extends JDialog implements VaultItemEditor {
         {
             c.anchor = GridBagConstraints.LINE_START;
             c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx = 2;
-            c.gridy = 0;
-            c.insets = new Insets(5, 5, 5, 5);
-            panel.add(encryptKey, c);
-        }
-        {
-            c.anchor = GridBagConstraints.LINE_START;
-            c.fill = GridBagConstraints.HORIZONTAL;
             c.gridx = 0;
             c.gridy = 1;
             c.insets = new Insets(5, 5, 5, 5);
@@ -142,14 +127,6 @@ public class VaultItemEditorDialog extends JDialog implements VaultItemEditor {
             c.insets = new Insets(5, 5, 5, 5);
             panel.add(value, c);
         }
-        {
-            c.anchor = GridBagConstraints.LINE_START;
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx = 2;
-            c.gridy = 1;
-            c.insets = new Insets(5, 5, 5, 5);
-            panel.add(encryptValue, c);
-        }
 
         setLayout(new BorderLayout(5, 5));
         add(panel, BorderLayout.CENTER);
@@ -160,8 +137,6 @@ public class VaultItemEditorDialog extends JDialog implements VaultItemEditor {
     private void initComponents() {
         this.key = new JTextField("", 15);
         this.value = new JTextField("", 20);
-        this.encryptKey = new JCheckBox("Encrypt");
-        this.encryptValue = new JCheckBox("Encrypt");
         this.saveBtn = new JButton("Save");
         this.cancelBtn = new JButton("Cancel");
     }

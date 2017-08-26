@@ -15,6 +15,5 @@
         <property name="cryptoEngine" ref="cryptoEngine" />
         <property name="registration" value="${user.home}/.keestore/keevault_registration" />
         <property name="publicKeySizeBits" value="2048" />
-        
     </bean>
 </beans>

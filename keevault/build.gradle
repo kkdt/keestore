@@ -17,6 +17,20 @@ buildscript {
 
 apply plugin: 'spring-boot'
 
+jar {
+    manifest {
+        attributes(
+            "Name": project.name,
+            "Specification-Title": "keestore",
+            "Specification-Version": version,
+            "Specification-Vendor": "kkdt.one",
+            "Implementation-Title": "keestore: keevault",
+            "Implementation-Version": version,
+            "Implementation-Vendor": "me@kkdt.one"
+        )
+    }
+}
+
 dependencies {
    compile project(':keestore-api')
    

@@ -30,8 +30,6 @@ public class VaultItemTable extends JTable {
         model = new VaultItemTableModel();
         setModel(model);
         setRowSelectionAllowed(true);
-//        setColumnSelectionAllowed(true);
-        setCellSelectionEnabled(true);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         configureColumnModel();
     }

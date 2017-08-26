@@ -6,7 +6,6 @@
 package keestore.vault.ui;
 
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 
@@ -52,14 +51,17 @@ public class VaultConsoleWindow extends JFrame implements ApplicationListener<Va
         JMenuBar menubar = new JMenuBar();
         JMenu file = new JMenu("File");
         file.setMnemonic(KeyEvent.VK_F);
-        JMenuItem eMenuItem = new JMenuItem("Exit");
-        eMenuItem.setMnemonic(KeyEvent.VK_E);
-        eMenuItem.setToolTipText("Exit application");
-        eMenuItem.addActionListener((ActionEvent event) -> {
+        JMenuItem exit = new JMenuItem("Exit");
+        exit.setMnemonic(KeyEvent.VK_E);
+        exit.setToolTipText("Exit application");
+        exit.addActionListener(e -> {
             System.exit(0);
         });
-        file.add(eMenuItem);
+        file.add(exit);
+        JMenu help = Util.createHelpMenu(VaultConsoleWindow.class, "vault");
+        
         menubar.add(file);
+        menubar.add(help);
         return menubar;
     }
 
