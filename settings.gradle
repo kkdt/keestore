@@ -6,6 +6,4 @@
 include 'keestore-api'
 include 'keevault'
 
-include 'keecore'
-
 rootProject.name = 'keestore'
