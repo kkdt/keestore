@@ -14,6 +14,12 @@ Keevault is a standalone, thick-client application that runs on the user's local
 
 The user creates a "vault" which is just a basic bin for one or more key-value items that are saved encrypted. The user can create many vaults and each vault will have a unique identifier that is hidden from the user; therefore, a user can have a vault with the same name. However, vault items within a single vault must have a unique key.
 
+Below are links to the built distributions in various formats (provided by Dropbox):
+
+1. Mac [keevault-0.2.dmg](https://www.dropbox.com/s/7cdukwzf8yzl1wr/keevault-0.2.dmg?dl=0)
+2. Linux/Windows [keevault-0.2.tar](https://www.dropbox.com/s/bn0z0luu7wx6pfc/keevault-0.2.tar?dl=0)
+3. Linux/Windows [keevault-0.2.zip](https://www.dropbox.com/s/wg3g6aa0l792f33/keevault-0.2.zip?dl=0)
+
 ## Crypto
 
 ### User Keys
