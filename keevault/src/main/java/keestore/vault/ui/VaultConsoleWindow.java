@@ -96,7 +96,7 @@ public class VaultConsoleWindow extends JFrame implements ApplicationListener<Va
     public void init() {
         Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler(VaultConsoleWindow.this));
         Util.withEventQueue(() -> {
-            logger.info("Initializing main view");
+            logger.debug("Initializing main view");
             vaults.setVaultCrypto(this.crypto);
             vaults.init();
             pack();
@@ -108,7 +108,7 @@ public class VaultConsoleWindow extends JFrame implements ApplicationListener<Va
 
     @Override
     public void onApplicationEvent(VaultCryptoInitialized event) {
-        logger.info("Initializing display with vault conext: " 
+        logger.debug("Initializing display with vault conext: " 
             + event.getCrypto() + ", source: " + event.getSource());
         this.crypto = event.getCrypto();
         init();

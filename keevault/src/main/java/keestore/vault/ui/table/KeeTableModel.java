@@ -120,7 +120,7 @@ public class KeeTableModel extends AbstractTableModel implements KeeAccess {
             Util.withEventQueue(() -> {
                 boolean removed = data.remove(k);
                 if (removed) {
-                    logger.info("Kee removed: " + k);
+                    logger.debug("Kee removed: " + k);
                     fireTableDataChanged();
                 }
             });

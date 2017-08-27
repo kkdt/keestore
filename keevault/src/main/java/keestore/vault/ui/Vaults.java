@@ -69,7 +69,7 @@ public class Vaults extends JPanel {
         scheduleTimer();
         initListeners();
         header.setVaultCrypto(crypto);
-        logger.info("Vaults initialized");
+        logger.debug("Vaults initialized");
     }
 
     private void initComponents() {

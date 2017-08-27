@@ -27,12 +27,12 @@ public class KeeVault {
    private static final Logger logger = Logger.getLogger(KeeVault.class);
    
    public static void main(String[] args) {
-      logger.info("======================================================");
-      logger.info("Starting application " + KeeVault.class.getSimpleName());
-      logger.info("======================================================");
+      logger.debug("======================================================");
+      logger.debug("Starting application " + KeeVault.class.getSimpleName());
+      logger.debug("======================================================");
       
       SpringApplicationBuilder app = new SpringApplicationBuilder(KeeVault.class)
-         .bannerMode(Mode.OFF);
+         .bannerMode(Mode.OFF).logStartupInfo(false);
       app.headless(false).web(false)
          .run(args);
    }

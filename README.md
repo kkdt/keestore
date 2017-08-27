@@ -5,13 +5,22 @@
 ## Overview
 This project is a crypto tool that uses public/private keys with an additional symmetric key for encryption and decryption. **keevault** is a standalone, Java thick-client that provides the UI for the user to encrypt/decrypt key-value model data. The encrypted payload along with the user's key set are stored locally in the user's home directory. All encryption and decryption occurs locally on the user's machine; therefore, the crypto for keevault does not address related risks with "across the wire" data transmission.
 
+## Keevault
+Keevault is a standalone, thick-client application that runs on the user's local machine. Application data is saved in `$HOME/.keestore` and includes:
+
+1. `logs` - Application logs
+2. `keevault_registration` - User registration details that includes the crypto keys
+3. `<uniqueid>` file - The encrypted storage for data inputs into the UI (i.e. `$HOME/.keestore/ce8d6e3b-7791-497d-9310-0dd94ee50ed6`)
+
+The user creates a "vault" which is just a basic bin for one or more key-value items that are saved encrypted. The user can create many vaults and each vault will have a unique identifier that is hidden from the user; therefore, a user can have a vault with the same name. However, vault items within a single vault must have a unique key.
+
 ## Crypto
 
 ### User Keys
 On the first run, the user will obtain an RSA key pair and a symmetric key. The current implementation uses RSA 2048 bit keys and AES128 with an 16-byte initializing vector. User keys are stored as a 'registration' json object in `$HOME/.keestore/keevault_registration`.
 
 ```
-{
+
    "publicKey":(encoded),
    "privateKey":(encoded),
    "secretKey":(encrypted via publicKey),

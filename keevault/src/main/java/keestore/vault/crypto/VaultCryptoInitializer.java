@@ -77,7 +77,7 @@ public class VaultCryptoInitializer implements ApplicationContextAware, Initiali
         }
         
         if(applicationContext != null) {
-            logger.info("Vault Crypto initialized, publishing to application context");
+            logger.debug("Vault Crypto initialized, publishing to application context");
             applicationContext.publishEvent(new VaultCryptoInitialized(applicationContext,crypto));
         }
     }
@@ -105,6 +105,6 @@ public class VaultCryptoInitializer implements ApplicationContextAware, Initiali
               return data.iterator();
            }
         });
-        logger.info("Registration written to " + regfile.getAbsolutePath());
+        logger.debug("Registration written to " + regfile.getAbsolutePath());
      }
 }

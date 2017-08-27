@@ -21,7 +21,12 @@ buildscript {
 
 apply plugin: 'distribution'
 apply plugin: 'spring-boot'
+apply plugin: 'maven-publish'
 apply plugin: "edu.sc.seis.macAppBundle"
+
+ext {
+    localrepo = project.hasProperty('localrepo') ? localrepo : buildDir.path + "/artifacts"
+}
 
 jar {
     manifest {
@@ -57,3 +62,22 @@ dependencies {
         exclude module: 'spring-boot-starter-log4j'
     }
 }
+
+publishing {
+    publications {
+        create( 'keevaultDists', MavenPublication ) {
+            artifact distZip
+            artifact distTar
+            artifact("$buildDir/distributions/" + project.name + "-" + project.version + ".dmg")
+            groupId project.group
+            artifactId project.name
+            version project.version
+        }
+    }
+    // publish artifacts to local directory
+    repositories {
+       maven {
+          url file(localrepo)
+       }
+    }
+ }

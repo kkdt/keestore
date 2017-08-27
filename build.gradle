@@ -17,13 +17,10 @@ buildscript {
 }
 
 description = 'Key-value storage with crypto (master build)'
-version = '0.2'
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'kkdt.gradle.eclipseone'
-
-group = 'keestore'
 
 eclipse {
    classpath {
@@ -43,11 +40,14 @@ eclipse {
    }
 }
 
+allprojects {
+    version = '0.2'
+    group = 'kkdt'
+}
+
 subprojects {
    apply plugin: 'java'
    apply plugin: 'maven'
-   
-   group = 'keestore'
 }
 
 allprojects { project ->
