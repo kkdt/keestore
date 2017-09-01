@@ -16,8 +16,14 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 
 import keestore.access.KeeItem;
 import keestore.crypto.Crypto;
@@ -31,33 +37,32 @@ import keestore.crypto.CryptoEngine;
  * @author thinh ho
  *
  */
-public class VaultCryptoInitializer implements ApplicationContextAware, InitializingBean {
+@Configuration
+@PropertySources(value = {
+    // user can provide user-specific properties if exist
+    @PropertySource(value="file:${user.home}/.keestore/keevault.properties", ignoreResourceNotFound=true) 
+})
+public class VaultCryptoInitializer implements ApplicationContextAware {
     private static final Logger logger = Logger.getLogger(VaultCryptoInitializer.class);
     
+    @Autowired
     private ApplicationContext applicationContext;
-    private String registration;
+    
+    @Autowired(required=true)
     private CryptoEngine cryptoEngine;
+    
+    @Value(value="${user.crypto.registration.file:${crypto.registration.file}}")
+    private String registration;
+    
+    @Value(value="${user.crypto.rsa.keysize:${crypto.rsa.keysize}}")
     private int publicKeySizeBits = 1024;
     
-    public void setPublicKeySizeBits(int publicKeySizeBits) {
-        this.publicKeySizeBits = publicKeySizeBits;
-    }
-
-    public void setRegistration(String registration) {
-        this.registration = registration;
-    }
-
-    public void setCryptoEngine(CryptoEngine cryptoEngine) {
-        this.cryptoEngine = cryptoEngine;
-    }
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    private void doInitialization() throws Exception {
         File regfile = new File(registration);
         VaultCrypto crypto = null;
         
@@ -80,6 +85,13 @@ public class VaultCryptoInitializer implements ApplicationContextAware, Initiali
             logger.debug("Vault Crypto initialized, publishing to application context");
             applicationContext.publishEvent(new VaultCryptoInitialized(applicationContext,crypto));
         }
+    }
+    
+    @Bean
+    public InitializingBean initialzedBean() {
+        return () -> {
+            doInitialization();
+        };
     }
     
     private VaultCrypto createVaultCrypto() {

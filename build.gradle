@@ -63,6 +63,11 @@ allprojects { project ->
          project.configurations.each {
             println '   ' + it + ' ' + it.description
          }
+         println 'os.name = ' + System.properties['os.name']
+         println 'os.arch = ' + System.properties['os.arch']
+         if(System.properties['os.name'].contains('Mac')) {
+             println 'Building on a Mac OSX'
+         }
       }
    }
 }

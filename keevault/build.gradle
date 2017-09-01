@@ -22,7 +22,20 @@ buildscript {
 apply plugin: 'distribution'
 apply plugin: 'spring-boot'
 apply plugin: 'maven-publish'
-apply plugin: "edu.sc.seis.macAppBundle"
+
+if(System.properties['os.name'].contains('Mac')) {
+    println 'Building on a Mac OSX - applying edu.sc.seis.macAppBundle'
+    apply plugin: "edu.sc.seis.macAppBundle"
+    
+    macAppBundle {
+        appName = 'keevault'
+        mainClassName = "keestore.vault.KeeVault"
+        icon = "src/macapp/Default.icns"
+        bundleJRE = true
+        backgroundImage = "src/macapp/Default.png"
+        javaProperties.put("apple.laf.useScreenMenuBar", "true")
+    }
+}
 
 ext {
     localrepo = project.hasProperty('localrepo') ? localrepo : buildDir.path + "/artifacts"
@@ -40,15 +53,6 @@ jar {
             "Implementation-Vendor": "me@kkdt.one"
         )
     }
-}
-
-macAppBundle {
-    appName = 'keevault'
-    mainClassName = "keestore.vault.KeeVault"
-    icon = "src/macapp/Default.icns"
-    bundleJRE = true
-    backgroundImage = "src/macapp/Default.png"
-    javaProperties.put("apple.laf.useScreenMenuBar", "true")
 }
 
 dependencies {
