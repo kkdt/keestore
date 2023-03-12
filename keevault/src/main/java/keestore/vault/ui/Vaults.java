@@ -60,6 +60,11 @@ public class Vaults extends JPanel {
         layoutComponents();
     }
     
+    Vaults withVaultCrypto(VaultCrypto crypto) {
+        setVaultCrypto(crypto);
+        return this;
+    }
+    
     void setVaultCrypto(VaultCrypto crypto) {
         this.crypto = crypto;
         this.tableController.setVaultCrypto(crypto);

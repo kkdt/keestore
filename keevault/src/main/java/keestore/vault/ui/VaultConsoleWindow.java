@@ -111,6 +111,10 @@ public class VaultConsoleWindow extends JFrame implements ApplicationListener<Va
         logger.debug("Initializing display with vault conext: " 
             + event.getCrypto() + ", source: " + event.getSource());
         this.crypto = event.getCrypto();
+        
+        
+        
+        
         init();
     }
 }
